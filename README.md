@@ -3,5 +3,3 @@ This game is suppose to be a scrolling background game with obstacles coming tow
 The points should be counted by the number of backgrounds passed to keep track. 
 
 The background will be varying in speed depending on how far into the game the player is. 
-
-This is a git test

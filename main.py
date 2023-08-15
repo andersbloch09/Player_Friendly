@@ -31,7 +31,7 @@ player_HEIGHT = 25
 player = pygame.Rect(0, 0, player_WIDTH, player_HEIGHT)
 
 #This is the main background 
-GREEN_WORLD = pygame.transform.scale(pygame.image.load('Assets\GreenWorld.PNG'), (WIDTH, HEIGHT)) 
+GREEN_WORLD = pygame.transform.scale(pygame.image.load('Assets/GreenWorld.PNG'), (WIDTH, HEIGHT)) 
 
 # Events based on the game progress
 PLAYER_HIT = pygame.USEREVENT + 1

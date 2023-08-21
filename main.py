@@ -36,10 +36,10 @@ system_type = platform.system()
 
 if system_type == "Darwin":
     print("macOS")
-    GREEN_WORLD = pygame.transform.scale(pygame.image.load('Assets/GreenWorld.PNG'), (WIDTH, HEIGHT)) 
+    GREEN_WORLD = pygame.transform.scale(pygame.image.load('Assets/grass.PNG'), (WIDTH, HEIGHT)) 
 elif system_type == "Windows":
     print("Windows")
-    GREEN_WORLD = pygame.transform.scale(pygame.image.load('Assets\GreenWorld.PNG'), (WIDTH, HEIGHT)) 
+    GREEN_WORLD = pygame.transform.scale(pygame.image.load('Assets\grass.png'), (WIDTH, HEIGHT)) 
 
 # Events based on the game progress
 PLAYER_HIT = pygame.USEREVENT + 1
@@ -74,7 +74,7 @@ def sprite_creation(first_lvl_group):
     sprite_width = 20
     sprite_pos_y = 0 - 10
     sprite_pos_x = WIDTH - distance_between_poles
-    print(distance_between_poles)
+    # print(distance_between_poles)
     sprite_height = random.randint(100, 350)
     # This variable desides the distance between the poles
     distance_between_poles -= 300

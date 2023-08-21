@@ -1,5 +1,6 @@
 import pygame
 import random
+import platform
 
 pygame.font.init()
 
@@ -31,7 +32,14 @@ player_HEIGHT = 25
 player = pygame.Rect(0, 0, player_WIDTH, player_HEIGHT)
 
 #This is the main background 
-GREEN_WORLD = pygame.transform.scale(pygame.image.load('Assets\grass.png'), (WIDTH, HEIGHT)) 
+system_type = platform.system()
+
+if system_type == "Darwin":
+    print("macOS")
+    GREEN_WORLD = pygame.transform.scale(pygame.image.load('Assets/GreenWorld.PNG'), (WIDTH, HEIGHT)) 
+elif system_type == "Windows":
+    print("Windows")
+    GREEN_WORLD = pygame.transform.scale(pygame.image.load('Assets\GreenWorld.PNG'), (WIDTH, HEIGHT)) 
 
 # Events based on the game progress
 PLAYER_HIT = pygame.USEREVENT + 1

@@ -76,10 +76,12 @@ class avoid_object(pygame.sprite.Sprite):
                 self.kill()
 
 # This function will draw the terran objects
-def terran_sprite_creation():
-    
+def terran_sprite_creation(terran_large_stone):
+    stone = large_stone_one(100, 100, 50, 50)
 
-    stone = 
+    terran_large_stone.add(stone)
+
+    return terran_large_stone
 
 # Function which creates the sprites both on bottom and on top
 def sprite_creation_first_lvl(first_lvl_group):
@@ -115,7 +117,7 @@ def sprite_movement(first_lvl_group):
         sprite.update_speed()
 
 # Draws the content on the window
-def draw_window(player, green_world_move, first_lvl_group, start_line, player_health):
+def draw_window(player, green_world_move, first_lvl_group, start_line, player_health, terran_large_stone):
     WIN.fill((BLACK))
     WIN.blit(GREEN_WORLD, (green_world_move.x, green_world_move.y))
     # The two if statements resolve in the moving background refresh
@@ -131,7 +133,8 @@ def draw_window(player, green_world_move, first_lvl_group, start_line, player_he
     # This updates the sprites 
     first_lvl_group.update()
     first_lvl_group.draw(WIN)
-    
+    terran_large_stone.update()
+    terran_large_stone.draw(WIN)
     # Displays health 
     player_health = HEALTH_FONT.render(
         "Health: " + str(player_health), 1, WHITE)
@@ -171,8 +174,8 @@ def player_hit(first_lvl_group, player):
     elif hit_occured and len(collided_sprites) < 1: 
         hit_occured = False
 
-def draw_lose(player, green_world_move, first_lvl_group, start_line, player_health):
-    draw_window(player, green_world_move, first_lvl_group, start_line, player_health)
+def draw_lose(player, green_world_move, first_lvl_group, start_line, player_health, terran_large_stone):
+    draw_window(player, green_world_move, first_lvl_group, start_line, player_health, terran_large_stone)
     
     draw_text = LOSE_FONT.render("LOSER!", 1, RED)
     WIN.blit(draw_text, (WIDTH/2 - draw_text.get_width() /
@@ -197,7 +200,7 @@ def main():
 
     clock = pygame.time.Clock()
     run = True
-    
+
     while run:
         clock.tick(FPS)
         for event in pygame.event.get():
@@ -211,19 +214,19 @@ def main():
                 print(hit_count)
         # Draw if you lose
         if player_health <= 0: 
-            draw_lose(player, green_world_move, first_lvl_group, start_line, player_health)
+            draw_lose(player, green_world_move, first_lvl_group, start_line, player_health, terran_large_stone)
             break
         # These lines are for the sprites creation and updates 
         if screen_starter >= 1 or player.x > 100: 
             first_lvl_group = sprite_creation_first_lvl(first_lvl_group)
             sprite_movement(first_lvl_group)
             start_line.x -= SCREEN_VEL
-        large_stone = terran_sprite_creation(terran_large_stone)
+        terran_large_stone = terran_sprite_creation(terran_large_stone)
         keys_pressed = pygame.key.get_pressed()
         player_hit(first_lvl_group, player)
         player_movement(keys_pressed, player)
         screen_movement(player, green_world_move)
-        draw_window(player, green_world_move, first_lvl_group, start_line, player_health)
+        draw_window(player, green_world_move, first_lvl_group, start_line, player_health, terran_large_stone)
 
     main()
 

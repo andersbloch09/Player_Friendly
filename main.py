@@ -36,10 +36,10 @@ system_type = platform.system()
 
 if system_type == "Darwin":
     print("macOS")
-    GREEN_WORLD = pygame.transform.scale(pygame.image.load('Assets/grass.PNG'), (WIDTH, HEIGHT)) 
+    GREEN_WORLD = pygame.transform.scale(pygame.image.load('Assets/GreenWorld.PNG'), (WIDTH, HEIGHT)) 
 elif system_type == "Windows":
     print("Windows")
-    GREEN_WORLD = pygame.transform.scale(pygame.image.load('Assets\grass.png'), (WIDTH, HEIGHT)) 
+    GREEN_WORLD = pygame.transform.scale(pygame.image.load('Assets\GreenWorld.PNG'), (WIDTH, HEIGHT)) 
 
 # Events based on the game progress
 PLAYER_HIT = pygame.USEREVENT + 1
@@ -48,6 +48,16 @@ PLAYER_HIT = pygame.USEREVENT + 1
 HEALTH_FONT = pygame.font.SysFont('comicsans', 40)
 LOSE_FONT = pygame.font.SysFont('comicsans', 100)
 
+# This class will create terran objects
+class large_stone_one(pygame.sprite.Sprite):
+    def __init__(self, pos_x, pos_y, initial_width, initial_height):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load("Assets\large_stone_1.png")
+        self.image = pygame.transform.scale(self.image, (initial_width, initial_height))
+        self.rect = self.image.get_rect()
+        self.rect.topleft = [pos_x, pos_y]
+     
+            
 # Class for creation of sprites for poles 
 class avoid_object(pygame.sprite.Sprite):
     def __init__(self, width, height, pos_x, pos_y, color):
@@ -64,10 +74,15 @@ class avoid_object(pygame.sprite.Sprite):
             self.rect.x -= self.speed
             if self.rect.x <= -10:
                 self.kill()
-                
+
+# This function will draw the terran objects
+def terran_sprite_creation():
+    
+
+    stone = 
 
 # Function which creates the sprites both on bottom and on top
-def sprite_creation(first_lvl_group):
+def sprite_creation_first_lvl(first_lvl_group):
     global distance_between_poles
     global avoid_object_list
     # Top Sprite 
@@ -175,6 +190,7 @@ def main():
     player = pygame.Rect(0, 0, player_WIDTH, player_HEIGHT)
     start_line = pygame.Rect(100, 0, 10, 800)
     first_lvl_group = pygame.sprite.Group()
+    terran_large_stone = pygame.sprite.Group()
     green_world_move = pygame.Rect(0, 0, WIDTH, HEIGHT)
     hit_count = 0
     player_health = 1
@@ -199,10 +215,10 @@ def main():
             break
         # These lines are for the sprites creation and updates 
         if screen_starter >= 1 or player.x > 100: 
-            first_lvl_group = sprite_creation(first_lvl_group)
+            first_lvl_group = sprite_creation_first_lvl(first_lvl_group)
             sprite_movement(first_lvl_group)
             start_line.x -= SCREEN_VEL
-        
+        large_stone = terran_sprite_creation(terran_large_stone)
         keys_pressed = pygame.key.get_pressed()
         player_hit(first_lvl_group, player)
         player_movement(keys_pressed, player)

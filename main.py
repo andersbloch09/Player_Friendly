@@ -210,6 +210,8 @@ def player_movement(keys_pressed, player):
         player.y -= PLAYER_VEL
     if keys_pressed[pygame.K_s] and player.y < HEIGHT - player_HEIGHT:
         player.y += PLAYER_VEL
+    if player.x > 0: 
+        player.x += -SCREEN_VEL
 
 # This function decides when the screen will move and how fast 
 def screen_movement(player, green_world_move):

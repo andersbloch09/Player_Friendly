@@ -1,8 +1,8 @@
-import pygame
+import pygame as pg
 import random
 import platform
 
-pygame.font.init()
+pg.font.init()
 
 # Width and Height of window 
 WIDTH, HEIGHT = 1800, 800
@@ -22,42 +22,42 @@ avoid_object_list = []
 large_stone_list = []
 
 # Makes the first display and its size
-WIN = pygame.display.set_mode((WIDTH, HEIGHT)) 
+WIN = pg.display.set_mode((WIDTH, HEIGHT)) 
 # Makes caption 
-pygame.display.set_caption('Player friendly.')
+pg.display.set_caption('Player friendly.')
 
 # Player size of rect
 player_WIDTH = 25
 player_HEIGHT = 25
 
-player = pygame.Rect(0, 0, player_WIDTH, player_HEIGHT)
+player = pg.Rect(0, 0, player_WIDTH, player_HEIGHT)
 
 #This is the main background 
 system_type = platform.system()
 
 if system_type == "Darwin":
     print("macOS")
-    GREEN_WORLD = pygame.transform.scale(pygame.image.load('Assets/GreenWorld.PNG'), (WIDTH, HEIGHT)) 
-    large_stone_image = pygame.image.load("Assets/large_stone_1.png")
+    GREEN_WORLD = pg.transform.scale(pg.image.load('Assets/GreenWorld.PNG'), (WIDTH, HEIGHT)) 
+    large_stone_image = pg.image.load("Assets/large_stone_1.png").convert_alpha()
 elif system_type == "Windows":
     print("Windows")
-    GREEN_WORLD = pygame.transform.scale(pygame.image.load('Assets\GreenWorld.PNG'), (WIDTH, HEIGHT)) 
-    large_stone_image = pygame.image.load("Assets\large_stone_1.png")
+    GREEN_WORLD = pg.transform.scale(pg.image.load('Assets\GreenWorld.PNG'), (WIDTH, HEIGHT)) 
+    large_stone_image = pg.image.load("Assets\large_stone_1.png").convert_alpha()
 
 # Events based on the game progress
-PLAYER_HIT = pygame.USEREVENT + 1
+PLAYER_HIT = pg.USEREVENT + 1
 
 # Creates Text fonts 
-HEALTH_FONT = pygame.font.SysFont('comicsans', 40)
-LOSE_FONT = pygame.font.SysFont('comicsans', 100)
+HEALTH_FONT = pg.font.SysFont('comicsans', 40)
+LOSE_FONT = pg.font.SysFont('comicsans', 100)
 
 # This class will create terran objects
-class large_stone_one(pygame.sprite.Sprite):
+class large_stone_one(pg.sprite.Sprite):
     def __init__(self, pos_x, pos_y, initial_width, initial_height):
-        pygame.sprite.Sprite.__init__(self)
+        pg.sprite.Sprite.__init__(self)
         # Note consider loading the image outside of the class
         self.image = large_stone_image
-        self.image = pygame.transform.scale(self.image, (initial_width, initial_height))
+        self.image = pg.transform.scale(self.image, (initial_width, initial_height))
         self.rect = self.image.get_rect()
         self.rect.topleft = [pos_x, pos_y]
         self.speed = SCREEN_VEL
@@ -76,10 +76,10 @@ class large_stone_one(pygame.sprite.Sprite):
                 
             
 # Class for creation of sprites for poles 
-class avoid_object(pygame.sprite.Sprite):
+class avoid_object(pg.sprite.Sprite):
     def __init__(self, width, height, pos_x, pos_y, color):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface([width, height])
+        pg.sprite.Sprite.__init__(self)
+        self.image = pg.Surface([width, height])
         self.image.fill(color)
         self.rect = self.image.get_rect()
         self.rect.topleft = [pos_x, pos_y]
@@ -182,10 +182,10 @@ def draw_window(player, green_world_move, first_lvl_group, start_line, player_he
     if green_world_move.x <= -WIDTH:
         green_world_move.x = 0
     # This draws the player 
-    pygame.draw.rect(WIN, BLACK, player)
+    pg.draw.rect(WIN, BLACK, player)
     # This draws the start line 
     if start_line.x > -10:
-        pygame.draw.rect(WIN, RED, start_line)
+        pg.draw.rect(WIN, RED, start_line)
     # This updates the sprites 
     first_lvl_group.update()
     first_lvl_group.draw(WIN)
@@ -198,27 +198,29 @@ def draw_window(player, green_world_move, first_lvl_group, start_line, player_he
     WIN.blit(player_health, (10, 10))
 
     # This updates everything onto the screen
-    pygame.display.update()
+    pg.display.update()
 
 # This function creates the movement for the player
 def player_movement(keys_pressed, player): 
-    if keys_pressed[pygame.K_a] and player.x > 0:
+    if keys_pressed[pg.K_a] and player.x > 0:
         player.x -= PLAYER_VEL
-    if keys_pressed[pygame.K_d] and player.x < WIDTH - player_WIDTH:
+    if keys_pressed[pg.K_d] and player.x < WIDTH - player_WIDTH:
         player.x += PLAYER_VEL
-    if keys_pressed[pygame.K_w] and player.y > 0:
+    if keys_pressed[pg.K_w] and player.y > 0:
         player.y -= PLAYER_VEL
-    if keys_pressed[pygame.K_s] and player.y < HEIGHT - player_HEIGHT:
+    if keys_pressed[pg.K_s] and player.y < HEIGHT - player_HEIGHT:
         player.y += PLAYER_VEL
-    if player.x > 0: 
-        player.x += -SCREEN_VEL
+
+        
 
 # This function decides when the screen will move and how fast 
 def screen_movement(player, green_world_move):
     global screen_starter
     if screen_starter >= 1 or player.x > 100: 
-       green_world_move.x -= SCREEN_VEL
-       screen_starter += 1
+        green_world_move.x -= SCREEN_VEL
+        screen_starter += 1
+        if player.x > 0:
+            player.x += -SCREEN_VEL
 
 # This function check colission of objects and the player 
 def player_hit(first_lvl_group, player):
@@ -228,13 +230,13 @@ def player_hit(first_lvl_group, player):
                         if player.colliderect(sprite.rect)]
     if not hit_occured and len(collided_sprites) == 1:
         hit_occured = True
-        pygame.event.post(pygame.event.Event(PLAYER_HIT))
+        pg.event.post(pg.event.Event(PLAYER_HIT))
     elif hit_occured and len(collided_sprites) < 1: 
         hit_occured = False
 
 def large_stone_hit(first_lvl_group, terran_large_stone):
     # This line of code checks for collision between the two groups and removes the one from terran_large_stone chosen by the True, False.
-    pygame.sprite.groupcollide(first_lvl_group, terran_large_stone, False, True)
+    pg.sprite.groupcollide(first_lvl_group, terran_large_stone, False, True)
 
 def draw_lose(player, green_world_move, first_lvl_group, start_line, player_health, terran_large_stone):
     draw_window(player, green_world_move, first_lvl_group, start_line, player_health, terran_large_stone)
@@ -242,8 +244,8 @@ def draw_lose(player, green_world_move, first_lvl_group, start_line, player_heal
     draw_text = LOSE_FONT.render("LOSER!", 1, RED)
     WIN.blit(draw_text, (WIDTH/2 - draw_text.get_width() /
                          2, HEIGHT/2 - draw_text.get_height()/2))
-    pygame.display.update()
-    pygame.time.delay(1000)
+    pg.display.update()
+    pg.time.delay(1000)
 
 def main():
     global screen_starter
@@ -254,23 +256,23 @@ def main():
     large_stone_list.clear()
     distance_between_poles = 0
     screen_starter = 0
-    player = pygame.Rect(0, 0, player_WIDTH, player_HEIGHT)
-    start_line = pygame.Rect(100, 0, 10, 800)
-    first_lvl_group = pygame.sprite.Group()
-    terran_large_stone = pygame.sprite.Group()
-    green_world_move = pygame.Rect(0, 0, WIDTH, HEIGHT)
+    player = pg.Rect(0, 0, player_WIDTH, player_HEIGHT)
+    start_line = pg.Rect(100, 0, 10, 800)
+    first_lvl_group = pg.sprite.Group()
+    terran_large_stone = pg.sprite.Group()
+    green_world_move = pg.Rect(0, 0, WIDTH, HEIGHT)
     hit_count = 0
     player_health = 1
 
-    clock = pygame.time.Clock()
+    clock = pg.time.Clock()
     run = True
 
     while run:
         clock.tick(FPS)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
                 run = False
-                pygame.quit()
+                pg.quit()
 
             # Event for player hit 
             if event.type == PLAYER_HIT:
@@ -291,7 +293,7 @@ def main():
         terran_large_stone = terran_sprite_creation(terran_large_stone, large_stone_list)
         sprite_movement(terran_large_stone)
         large_stone_hit(first_lvl_group, terran_large_stone)
-        keys_pressed = pygame.key.get_pressed()
+        keys_pressed = pg.key.get_pressed()
         player_hit(first_lvl_group, player)
         player_movement(keys_pressed, player)
         screen_movement(player, green_world_move)

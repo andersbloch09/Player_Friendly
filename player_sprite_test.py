@@ -31,8 +31,7 @@ BLACK = (0, 0, 0)
 last_update = pygame.time.get_ticks()
 animation_cooldown = 50
 frame = 0
-animation_steps = [11, 11, 11, 11, 1]
-action = 0
+action = 8
 
 temp_img_list = []
 animation_list = []
@@ -49,23 +48,61 @@ for x in range(6, 3, -1):
 
 animation_list.append(temp_img_list)
 
+
 for j in range(90, 360, 90):
-	print(j)
+	
 	temp_img_list = []
 	for x in range(11):
 		image = pygame.transform.rotate(animation_list[0][x], j)
+
+		rect = image.get_rect()
+		center = rect.center
+		
+
 		temp_img_list.append(image)
 
 	animation_list.append(temp_img_list)
 
 
 
+
+for j in range(45, 360, 90):
+	
+	temp_img_list = []
+	for x in range(11):
+		image = pygame.transform.rotate(animation_list[0][x], j)
+		
+		
+		temp_img_list.append(image)
+		
+	animation_list.append(temp_img_list)
+
+
+temp_img_list = []
+for x in range(11): 
+	image = temp_img_list.append(sprite_sheet.get_image(0, 25, 25, 3))
+	
+animation_list.append(temp_img_list)
+
+image = pygame.transform.rotate(animation_list[0][x], j)
+
+def get_center_coords(image):
+	rect_rotated = image.get_rect()
+		
+	center = rect_rotated.center
+
+	new_x = 0 - center[0] + 37
+	new_y = 0 - center[1] + 37
+	return new_x, new_y
+
+new_y = 0 
+new_x = 0
 run = True
 while run:
 
 	#update background
 	screen.fill(BG)
-
+	
 	#show frame image
 	
 	# update animation 
@@ -77,19 +114,41 @@ while run:
 		if frame == 11: 
 			frame = 0
 
-	screen.blit(animation_list[action][frame], (0, 0))
+	screen.blit(animation_list[action][frame], (50 + new_x, 50 + new_y))
 	keys_pressed = pygame.key.get_pressed()
+	if not any(keys_pressed):
+		action = 8
+
 	if keys_pressed[pygame.K_a]:
 		action = 2
-
+		new_y = 0
+		new_x = 0
 	if keys_pressed[pygame.K_d]:
 		action = 0 
+		new_y = 0
+		new_x = 0
 
 	if keys_pressed[pygame.K_w]:
 		action = 1
-	
+		new_y = 0
+		new_x = 0
 	if keys_pressed[pygame.K_s]:
 		action = 3
+		new_y = 0
+		new_x = 0
+	if keys_pressed[pygame.K_d] and keys_pressed[pygame.K_w]:
+		action = 4
+		new_x, new_y = get_center_coords(image)
+	if keys_pressed[pygame.K_w] and keys_pressed[pygame.K_a]:
+		action = 5
+		new_x, new_y = get_center_coords(image)
+	if keys_pressed[pygame.K_a] and keys_pressed[pygame.K_s]:
+		action = 6
+		new_x, new_y = get_center_coords(image)
+	if keys_pressed[pygame.K_s] and keys_pressed[pygame.K_d]:
+		action = 7
+		new_x, new_y = get_center_coords(image)
+
 
 
 	#event handler

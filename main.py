@@ -259,6 +259,7 @@ def player_movement(keys_pressed, player, image, last_update_player, animation_c
     new_x = 0
     if not any(keys_pressed):
         action = 8
+    # This controls straight walks
     if keys_pressed[pg.K_a] and player.x > 0:
         player.x -= PLAYER_VEL
         action = 2
@@ -280,6 +281,7 @@ def player_movement(keys_pressed, player, image, last_update_player, animation_c
         new_y = 0
         new_x = 0
 
+    # This controls the side walk 
     if keys_pressed[pg.K_d] and keys_pressed[pg.K_w] and player.x < WIDTH - player_WIDTH*3 and player.y > 0:
         action = 4
         new_x, new_y = get_center_coords(image)

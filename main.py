@@ -1,6 +1,7 @@
 import pygame as pg
 import random
 import platform
+from extract_player_image import extract_player_image
 
 pg.font.init()
 
@@ -12,14 +13,28 @@ FPS = 60
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
+
+# Velocities 
 PLAYER_VEL = 12
-SCREEN_VEL = 6
+SCREEN_VEL = 5
 SPRITE_VEL = SCREEN_VEL
+
+# Variable to control screenscroll start
 screen_starter = 0
-hit_occured = False 
+
+# Player hit variable
+hit_occured = False
+
+# change of the variable
 distance_between_poles = 0
+
+# List with sprites of different kinds for env
 avoid_object_list = []
 large_stone_list = []
+
+# Variables to control flow of character animation
+
+##########################################################################
 
 # Makes the first display and its size
 WIN = pg.display.set_mode((WIDTH, HEIGHT)) 
@@ -39,10 +54,12 @@ if system_type == "Darwin":
     print("macOS")
     GREEN_WORLD = pg.transform.scale(pg.image.load('Assets/GreenWorld.PNG'), (WIDTH, HEIGHT)) 
     large_stone_image = pg.image.load("Assets/large_stone_1.png").convert_alpha()
+    sprite_sheet_image = pg.image.load("Assets/walking_assets_player_friendly_1.png")
 elif system_type == "Windows":
     print("Windows")
     GREEN_WORLD = pg.transform.scale(pg.image.load('Assets\GreenWorld.PNG'), (WIDTH, HEIGHT)) 
     large_stone_image = pg.image.load("Assets\large_stone_1.png").convert_alpha()
+    sprite_sheet_image = pg.image.load("Assets\walking_assets_player_friendly_1.png")
 
 # Events based on the game progress
 PLAYER_HIT = pg.USEREVENT + 1
@@ -50,6 +67,20 @@ PLAYER_HIT = pg.USEREVENT + 1
 # Creates Text fonts 
 HEALTH_FONT = pg.font.SysFont('comicsans', 40)
 LOSE_FONT = pg.font.SysFont('comicsans', 100)
+
+#####################################################################################
+
+# This class is to controll the animation of the character
+class PlayerSpriteSheet():
+	def __init__(self, image):
+		self.sheet = image
+
+	def get_image(self, frame, width, height, scale):
+		image = pg.Surface((width, height), pg.SRCALPHA).convert_alpha()
+		image.blit(self.sheet, (0, 0), ((frame * width), 0, width, height))
+		image = pg.transform.scale(image, (width * scale, height * scale))
+
+		return image
 
 # This class will create terran objects
 class large_stone_one(pg.sprite.Sprite):
@@ -96,6 +127,10 @@ class avoid_object(pg.sprite.Sprite):
                     avoid_object_list.pop(0)
                 else: 
                     pass
+
+
+###################################################################################
+
 
 def create_large_stone(terran_large_stone, large_stone_list):
     global screen_starter
@@ -174,7 +209,7 @@ def sprite_movement(first_lvl_group):
         sprite.update_speed()
 
 # Draws the content on the window
-def draw_window(player, green_world_move, first_lvl_group, start_line, player_health, terran_large_stone):
+def draw_window(player, green_world_move, first_lvl_group, start_line, player_health, terran_large_stone, action, frame, new_x, new_y, animation_list):
     WIN.fill((BLACK))
     WIN.blit(GREEN_WORLD, (green_world_move.x, green_world_move.y))
     # The two if statements resolve in the moving background refresh
@@ -182,7 +217,10 @@ def draw_window(player, green_world_move, first_lvl_group, start_line, player_he
     if green_world_move.x <= -WIDTH:
         green_world_move.x = 0
     # This draws the player 
-    pg.draw.rect(WIN, BLACK, player)
+    # pg.draw.rect(WIN, BLACK, player)
+    
+    WIN.blit(animation_list[action][frame], ((player.x - 18) + new_x, (player.y - 18) + new_y))
+
     # This draws the start line 
     if start_line.x > -10:
         pg.draw.rect(WIN, RED, start_line)
@@ -200,27 +238,75 @@ def draw_window(player, green_world_move, first_lvl_group, start_line, player_he
     # This updates everything onto the screen
     pg.display.update()
 
+def get_center_coords(image):
+	rect_rotated = image.get_rect()
+		
+	center = rect_rotated.center
+
+	new_x = 0 - center[0] + 37
+	new_y = 0 - center[1] + 37
+	return new_x, new_y
+
 # This function creates the movement for the player
-def player_movement(keys_pressed, player): 
+def player_movement(keys_pressed, player, image, last_update_player, animation_cooldown, frame, action, new_x, new_y):
+    current_time = pg.time.get_ticks()
+    if current_time - last_update_player >= animation_cooldown:
+        frame += 1
+        last_update_player = current_time
+        if frame == 11: 
+            frame = 0
+    new_y = 0
+    new_x = 0
+    if not any(keys_pressed):
+        action = 8
     if keys_pressed[pg.K_a] and player.x > 0:
         player.x -= PLAYER_VEL
-    if keys_pressed[pg.K_d] and player.x < WIDTH - player_WIDTH:
+        action = 2
+        new_y = 0
+        new_x = 0
+    if keys_pressed[pg.K_d] and player.x < WIDTH - player_WIDTH*3:
         player.x += PLAYER_VEL
+        action = 0 
+        new_y = 0
+        new_x = 0
     if keys_pressed[pg.K_w] and player.y > 0:
         player.y -= PLAYER_VEL
-    if keys_pressed[pg.K_s] and player.y < HEIGHT - player_HEIGHT:
+        action = 1
+        new_y = 0
+        new_x = 0
+    if keys_pressed[pg.K_s] and player.y < HEIGHT - player_HEIGHT*3:
         player.y += PLAYER_VEL
+        action = 3
+        new_y = 0
+        new_x = 0
 
-        
+    if keys_pressed[pg.K_d] and keys_pressed[pg.K_w] and player.x < WIDTH - player_WIDTH*3 and player.y > 0:
+        action = 4
+        new_x, new_y = get_center_coords(image)
+    if keys_pressed[pg.K_w] and keys_pressed[pg.K_a] and player.x > 0 and player.y > 0:
+        action = 5
+        new_x, new_y = get_center_coords(image)
+    if keys_pressed[pg.K_a] and keys_pressed[pg.K_s] and player.x > 0 and player.y < HEIGHT - player_HEIGHT*3:
+        action = 6
+        new_x, new_y = get_center_coords(image)
+    if keys_pressed[pg.K_s] and keys_pressed[pg.K_d] and player.x < WIDTH - player_WIDTH*3 and player.y < HEIGHT - player_HEIGHT*3:
+        action = 7
+        new_x, new_y = get_center_coords(image)
+    
+    return action, frame, new_x, new_y
 
 # This function decides when the screen will move and how fast 
-def screen_movement(player, green_world_move):
+def screen_movement(player, green_world_move, action):
     global screen_starter
     if screen_starter >= 1 or player.x > 100: 
         green_world_move.x -= SCREEN_VEL
         screen_starter += 1
+        if player.x == 0: 
+            action = 0
         if player.x > 0:
             player.x += -SCREEN_VEL
+    
+    return action
 
 # This function check colission of objects and the player 
 def player_hit(first_lvl_group, player):
@@ -238,8 +324,8 @@ def large_stone_hit(first_lvl_group, terran_large_stone):
     # This line of code checks for collision between the two groups and removes the one from terran_large_stone chosen by the True, False.
     pg.sprite.groupcollide(first_lvl_group, terran_large_stone, False, True)
 
-def draw_lose(player, green_world_move, first_lvl_group, start_line, player_health, terran_large_stone):
-    draw_window(player, green_world_move, first_lvl_group, start_line, player_health, terran_large_stone)
+def draw_lose(player, green_world_move, first_lvl_group, start_line, player_health, terran_large_stone, action, frame, new_x, new_y, animation_list):
+    draw_window(player, green_world_move, first_lvl_group, start_line, player_health, terran_large_stone, action, frame, new_x, new_y, animation_list)
     
     draw_text = LOSE_FONT.render("LOSER!", 1, RED)
     WIN.blit(draw_text, (WIDTH/2 - draw_text.get_width() /
@@ -252,17 +338,32 @@ def main():
     global player
     global distance_between_poles
     global large_stone_list
+    # List clearing to avoid large ram issues
     avoid_object_list.clear()
     large_stone_list.clear()
+    # init of the starter variables
     distance_between_poles = 0
     screen_starter = 0
-    player = pg.Rect(0, 0, player_WIDTH, player_HEIGHT)
+    player = pg.Rect(0, HEIGHT//2, 40, 40)
     start_line = pg.Rect(100, 0, 10, 800)
     first_lvl_group = pg.sprite.Group()
     terran_large_stone = pg.sprite.Group()
     green_world_move = pg.Rect(0, 0, WIDTH, HEIGHT)
     hit_count = 0
     player_health = 1
+
+    # Counter for animation of character 
+    sprite_sheet = PlayerSpriteSheet(sprite_sheet_image)
+    last_update_player = pg.time.get_ticks()
+    animation_cooldown = 75
+    frame = 0 
+    action = 8
+    new_x = 0
+    new_y = 0
+    
+    # Init function to save the animation images
+    animation_list = extract_player_image(sprite_sheet)
+    image = pg.transform.rotate(animation_list[0][0], 315)
 
     clock = pg.time.Clock()
     run = True
@@ -282,7 +383,7 @@ def main():
             
         # Draw if you lose
         if player_health <= 0: 
-            draw_lose(player, green_world_move, first_lvl_group, start_line, player_health, terran_large_stone)
+            draw_lose(player, green_world_move, first_lvl_group, start_line, player_health, terran_large_stone, action, frame, new_x, new_y, animation_list)
             break
         # These lines are for the sprites creation and updates 
         if screen_starter >= 1 or player.x > 100:
@@ -295,9 +396,16 @@ def main():
         large_stone_hit(first_lvl_group, terran_large_stone)
         keys_pressed = pg.key.get_pressed()
         player_hit(first_lvl_group, player)
-        player_movement(keys_pressed, player)
-        screen_movement(player, green_world_move)
-        draw_window(player, green_world_move, first_lvl_group, start_line, player_health, terran_large_stone)
+
+
+
+        action, frame, new_x, new_y = player_movement(keys_pressed, player, image, last_update_player,
+                                                       animation_cooldown, frame, action, new_x, new_y)
+
+
+        action = screen_movement(player, green_world_move, action)
+        draw_window(player, green_world_move, first_lvl_group, start_line, player_health,
+                     terran_large_stone, action, frame, new_x, new_y, animation_list)
 
     main()
 

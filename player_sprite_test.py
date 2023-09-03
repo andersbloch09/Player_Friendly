@@ -7,7 +7,7 @@ SCREEN_HEIGHT = 500
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption('Spritesheets')
-sprite_sheet_image = pygame.image.load("walking_assets_player_friendly_1.png")
+sprite_sheet_image = pygame.image.load("Assets\walking_assets_player_friendly_1.png")
 
 class SpriteSheet():
 	def __init__(self, image):
@@ -84,7 +84,7 @@ for x in range(11):
 	
 animation_list.append(temp_img_list)
 
-image = pygame.transform.rotate(animation_list[0][x], j)
+image = pygame.transform.rotate(animation_list[0][0], j)
 
 def get_center_coords(image):
 	rect_rotated = image.get_rect()

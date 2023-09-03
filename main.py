@@ -324,8 +324,10 @@ def large_stone_hit(first_lvl_group, terran_large_stone):
     # This line of code checks for collision between the two groups and removes the one from terran_large_stone chosen by the True, False.
     pg.sprite.groupcollide(first_lvl_group, terran_large_stone, False, True)
 
-def draw_lose(player, green_world_move, first_lvl_group, start_line, player_health, terran_large_stone, action, frame, new_x, new_y, animation_list):
-    draw_window(player, green_world_move, first_lvl_group, start_line, player_health, terran_large_stone, action, frame, new_x, new_y, animation_list)
+def draw_lose(player, green_world_move, first_lvl_group, start_line, player_health,
+               terran_large_stone, action, frame, new_x, new_y, animation_list):
+    draw_window(player, green_world_move, first_lvl_group, start_line, player_health,
+                 terran_large_stone, action, frame, new_x, new_y, animation_list)
     
     draw_text = LOSE_FONT.render("LOSER!", 1, RED)
     WIN.blit(draw_text, (WIDTH/2 - draw_text.get_width() /

@@ -58,7 +58,7 @@ if system_type == "Darwin":
 elif system_type == "Windows":
     print("Windows")
     GREEN_WORLD = pg.transform.scale(pg.image.load('Assets\GreenWorld.PNG'), (WIDTH, HEIGHT)) 
-    large_stone_image = pg.image.load("Assets\large_stone_1.png").convert_alpha()
+    large_stone_image = pg.image.load("Assets\Small_stones_above_grey.png").convert_alpha()
     sprite_sheet_image = pg.image.load("Assets\walking_assets_player_friendly_1.png")
 
 # Events based on the game progress
@@ -216,10 +216,8 @@ def draw_window(player, green_world_move, first_lvl_group, start_line, player_he
     WIN.blit(GREEN_WORLD, (green_world_move.x + WIDTH, green_world_move.y))
     if green_world_move.x <= -WIDTH:
         green_world_move.x = 0
-    # This draws the player 
-    # pg.draw.rect(WIN, BLACK, player)
+   
     
-    WIN.blit(animation_list[action][frame], ((player.x - 18) + new_x, (player.y - 18) + new_y))
 
     # This draws the start line 
     if start_line.x > -10:
@@ -235,6 +233,9 @@ def draw_window(player, green_world_move, first_lvl_group, start_line, player_he
 
     WIN.blit(player_health, (10, 10))
 
+    # This draws the player 
+    # pg.draw.rect(WIN, BLACK, player)
+    WIN.blit(animation_list[action][frame], ((player.x - 18) + new_x, (player.y - 18) + new_y))
     # This updates everything onto the screen
     pg.display.update()
 

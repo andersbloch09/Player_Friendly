@@ -55,11 +55,13 @@ if system_type == "Darwin":
     GREEN_WORLD = pg.transform.scale(pg.image.load('Assets/GreenWorld.PNG'), (WIDTH, HEIGHT)) 
     large_stone_image = pg.image.load("Assets/large_stone_1.png").convert_alpha()
     sprite_sheet_image = pg.image.load("Assets/walking_assets_player_friendly_1.png")
+    hegn_til_anders = pg.image.load("Assets/HegnTilAnders.png")
 elif system_type == "Windows":
     print("Windows")
     GREEN_WORLD = pg.transform.scale(pg.image.load('Assets\GreenWorld.PNG'), (WIDTH, HEIGHT)) 
     large_stone_image = pg.image.load("Assets\Small_stones_above_grey.png").convert_alpha()
     sprite_sheet_image = pg.image.load("Assets\walking_assets_player_friendly_1.png")
+    hegn_til_anders = pg.image.load("Assets\HegnTilAnders.png")
 
 # Events based on the game progress
 PLAYER_HIT = pg.USEREVENT + 1
@@ -104,7 +106,6 @@ class large_stone_one(pg.sprite.Sprite):
                     large_stone_list.pop(0)
                 else: 
                     pass
-                
             
 # Class for creation of sprites for poles 
 class avoid_object(pg.sprite.Sprite):
@@ -115,6 +116,7 @@ class avoid_object(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.topleft = [pos_x, pos_y]
         self.speed = SPRITE_VEL
+        self.hegn_til_anders = hegn_til_anders
 
     def update_speed(self):
         global screen_starter
@@ -127,6 +129,10 @@ class avoid_object(pg.sprite.Sprite):
                     avoid_object_list.pop(0)
                 else: 
                     pass
+
+    def add_image(self):
+        number_of_images = self.image.get_size()
+        print(number_of_images)
 
 
 ###################################################################################
@@ -207,6 +213,12 @@ def sprite_creation_first_lvl(first_lvl_group):
 def sprite_movement(first_lvl_group):
     for sprite in first_lvl_group:
         sprite.update_speed()
+        sprite.add_image()
+
+def sprite_movement_terran(sprite_group):
+    for sprite in sprite_group:
+        sprite.update_speed()
+
 
 # Draws the content on the window
 def draw_window(player, green_world_move, first_lvl_group, start_line, player_health, terran_large_stone, action, frame, new_x, new_y, animation_list):
@@ -397,7 +409,7 @@ def main():
             start_line.x -= SCREEN_VEL
         
         terran_large_stone = terran_sprite_creation(terran_large_stone, large_stone_list)
-        sprite_movement(terran_large_stone)
+        sprite_movement_terran(terran_large_stone)
         large_stone_hit(first_lvl_group, terran_large_stone)
         keys_pressed = pg.key.get_pressed()
         player_hit(first_lvl_group, player)

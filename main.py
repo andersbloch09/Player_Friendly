@@ -53,7 +53,7 @@ system_type = platform.system()
 if system_type == "Darwin":
     print("macOS")
     GREEN_WORLD = pg.transform.scale(pg.image.load('Assets/GreenWorld.PNG'), (WIDTH, HEIGHT)) 
-    large_stone_image = pg.image.load("Assets/large_stone_1.png").convert_alpha()
+    large_stone_image = pg.image.load("Assets/Small_stones_above_grey.png").convert_alpha()
     sprite_sheet_image = pg.image.load("Assets/walking_assets_player_friendly_1.png")
     hegn_til_anders = pg.image.load("Assets/HegnTilAnders.png")
 elif system_type == "Windows":
@@ -132,19 +132,8 @@ class avoid_object(pg.sprite.Sprite):
 
 # This need a lot of logic work 
     def add_image(self):
-        sprite_size = self.image.get_size()
-        number_of_images = sprite_size[1] // 92
-        image_list = []
-        j = 0
-        for x in range(number_of_images):
-            new_image = self.hegn_til_anders.copy()  # Create a copy of the image
-            new_image_rect = new_image.get_rect()
-            new_image_rect.y = self.rect.topleft[1] + j  # Set the Y-coordinate of the new image
-            image_list.append(new_image)
-            j += 130
-        
-        return image_list
-        
+        number_of_images = self.image.get_size()
+        print(number_of_images)
 
         
 ###################################################################################
@@ -326,10 +315,10 @@ def screen_movement(player, green_world_move, action):
     if screen_starter >= 1 or player.x > 100: 
         green_world_move.x -= SCREEN_VEL
         screen_starter += 1
-        if player.x == 0: 
-            action = 0
         if player.x > 0:
             player.x += -SCREEN_VEL
+        if player.x <= 0: 
+            action = 0
     
     return action
 

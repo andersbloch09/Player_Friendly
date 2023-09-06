@@ -28,9 +28,9 @@ class MultiImageSprite(pygame.sprite.Sprite):
 
 
 # Load your images
-image1 = pygame.image.load("Assets\HegnTilAnders.png")  # Replace with your image file paths
-image2 = pygame.image.load("Assets\HegnTilAnders.png")
-image3 = pygame.image.load("Assets\HegnTilAnders.png")
+image1 = pygame.image.load("Assets/HegnTilAnders.png")  # Replace with your image file paths
+image2 = pygame.image.load("Assets/HegnTilAnders.png")
+image3 = pygame.image.load("Assets/HegnTilAnders.png")
 
 print("dimensions_of_image    = ", image1.get_size())
 # Create a list of images for your sprite

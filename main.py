@@ -320,7 +320,7 @@ def screen_movement(player, green_world_move, action):
         screen_starter += 1
         if player.x > 0:
             player.x += -SCREEN_VEL
-        if player.x == 0: 
+        if player.x <= 0: 
             action = 0
     
     return action

@@ -130,11 +130,23 @@ class avoid_object(pg.sprite.Sprite):
                 else: 
                     pass
 
+# This need a lot of logic work 
     def add_image(self):
-        number_of_images = self.image.get_size()
-        print(number_of_images)
+        sprite_size = self.image.get_size()
+        number_of_images = sprite_size[1] // 92
+        image_list = []
+        j = 0
+        for x in range(number_of_images):
+            new_image = self.hegn_til_anders.copy()  # Create a copy of the image
+            new_image_rect = new_image.get_rect()
+            new_image_rect.y = self.rect.topleft[1] + j  # Set the Y-coordinate of the new image
+            image_list.append(new_image)
+            j += 130
+        
+        return image_list
+        
 
-
+        
 ###################################################################################
 
 
@@ -190,7 +202,7 @@ def sprite_creation_first_lvl(first_lvl_group):
         distance_between_poles -= 300
         object_number = avoid_object(sprite_width, sprite_height, sprite_pos_x, sprite_pos_y, (BLACK))
         avoid_object_list.append(object_number)
-
+    
         # Bottom Sprite
         sprite_width = 20
         # This line is made to get the correct distance between the poles on each side
@@ -228,13 +240,11 @@ def draw_window(player, green_world_move, first_lvl_group, start_line, player_he
     WIN.blit(GREEN_WORLD, (green_world_move.x + WIDTH, green_world_move.y))
     if green_world_move.x <= -WIDTH:
         green_world_move.x = 0
-   
-    
 
     # This draws the start line 
     if start_line.x > -10:
         pg.draw.rect(WIN, RED, start_line)
-    # This updates the sprites 
+    # This updates the sprites
     first_lvl_group.update()
     first_lvl_group.draw(WIN)
     terran_large_stone.update()

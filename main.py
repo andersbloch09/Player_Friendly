@@ -313,8 +313,6 @@ def player_movement(keys_pressed, player, image, last_update_player, animation_c
 # This function decides when the screen will move and how fast 
 def screen_movement(player, green_world_move, action):
     global screen_starter
-    print(screen_starter)
-    print(player.x)
     if screen_starter >= 1 or player.x > 100: 
         green_world_move.x -= SCREEN_VEL
         screen_starter += 1

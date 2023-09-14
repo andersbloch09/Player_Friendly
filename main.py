@@ -132,12 +132,27 @@ class avoid_object(pg.sprite.Sprite):
 
 # This need a lot of logic work 
     def add_image(self):
-        number_of_images = self.image.get_size()
-        print(number_of_images)
+        image_size = self.image.get_size()
+        hegn_til_anders = pg.transform.scale(self.hegn_til_anders, (20 * 1.5, 92 * 1.5))
+        nrimages = image_size[1] // 92
+        if nrimages == 1: 
+            nrimages += 1
+        if self.rect.topleft[1] == -10: 
+            j = -146
+            rotated_image = pg.transform.rotate(hegn_til_anders, 180)
+            for i in range(nrimages):
+                WIN.blit(rotated_image, (self.rect.topleft[0] - 5, image_size[1] + j))
+                j -= 130
+            
 
+        if self.rect.topleft[1] > 0: 
+            j = 0
+            for i in range(nrimages):
+                WIN.blit(hegn_til_anders, (self.rect.topleft[0] - 5, 818 - image_size[1] + j))
+                j += 130
         
-###################################################################################
 
+###################################################################################
 
 def create_large_stone(terran_large_stone, large_stone_list):
     global screen_starter
@@ -175,7 +190,6 @@ def terran_sprite_creation(terran_large_stone, large_stone_list):
             return terran_large_stone
     else:
         return create_large_stone(terran_large_stone, large_stone_list)
-
 
 # Function which creates the sprites both on bottom and on top
 def sprite_creation_first_lvl(first_lvl_group):
@@ -216,10 +230,15 @@ def sprite_movement(first_lvl_group):
         sprite.update_speed()
         sprite.add_image()
 
+# This updates the fence of the groups and draws them 
+def add_image_first_lvl(first_lvl_group):
+    for sprite in first_lvl_group:
+        sprite.add_image()
+
+# This changes the speed of the stones
 def sprite_movement_terran(sprite_group):
     for sprite in sprite_group:
         sprite.update_speed()
-
 
 # Draws the content on the window
 def draw_window(player, green_world_move, first_lvl_group, start_line, player_health, terran_large_stone, action, frame, new_x, new_y, animation_list):
@@ -235,7 +254,10 @@ def draw_window(player, green_world_move, first_lvl_group, start_line, player_he
         pg.draw.rect(WIN, RED, start_line)
     # This updates the sprites
     first_lvl_group.update()
-    first_lvl_group.draw(WIN)
+    # This function here draws the fences
+    add_image_first_lvl(first_lvl_group)
+    # This lines under draws the sprites black 
+    # first_lvl_group.draw(WIN)
     terran_large_stone.update()
     terran_large_stone.draw(WIN)
     # Displays health 

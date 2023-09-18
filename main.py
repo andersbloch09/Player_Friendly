@@ -1,3 +1,4 @@
+from typing import Any
 import pygame as pg
 import random
 import platform
@@ -437,9 +438,8 @@ def player_hit(first_lvl_group, player):
         hit_occured = False
 
 # This function is for colission check of carrots and player point count 
-def carrot_pick(point_carrots_group, player):
+def carrot_pick(point_carrots_group, player_sprite):
     global hit_occured_carrot 
-    player_sprite = PlayerSprite(player)
     collided_sprites = pg.sprite.spritecollide(player_sprite, point_carrots_group, True)
     
     if not hit_occured_carrot and len(collided_sprites) == 1:
@@ -452,11 +452,9 @@ def carrot_pick(point_carrots_group, player):
     elif hit_occured_carrot and len(collided_sprites) < 1: 
         hit_occured_carrot = False
 
-def stone_hit(terran_large_stone, player):
+def stone_hit(terran_large_stone, player_sprite):
     global hit_occured_stone
-    player_sprite = PlayerSprite(player)
     collided_sprites = pg.sprite.spritecollide(player_sprite, terran_large_stone, False)
-    
     if not hit_occured_stone and len(collided_sprites) == 1:
         hit_occured_stone = True
         pg.event.post(pg.event.Event(STONE_HIT))
@@ -482,12 +480,13 @@ def draw_lose(player, green_world_move, first_lvl_group, start_line, player_heal
                          2, HEIGHT/2 - draw_text.get_height()/2))
     pg.display.update()
     pg.time.delay(1000)
-
+    
 def main():
     global screen_starter
     global player
     global distance_between_poles
     global large_stone_list
+    global SCREEN_VEL
     # List clearing to avoid large ram issues
     avoid_object_list.clear()
     large_stone_list.clear()
@@ -521,6 +520,10 @@ def main():
     clock = pg.time.Clock()
     run = True
 
+    player_sprite = PlayerSprite(player)
+    speed_timer_0 = pg.time.get_ticks()
+
+
     while run:
         clock.tick(FPS)
         for event in pg.event.get():
@@ -532,6 +535,7 @@ def main():
             if event.type == PLAYER_HIT:
                 hit_count += 1
                 player_health -= 1
+                player.x = player.x - 100
         
             if event.type == CARROT_PICK: 
                 point_count += 1
@@ -544,19 +548,28 @@ def main():
             draw_lose(player, green_world_move, first_lvl_group, start_line, player_health,
                        terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, point_carrots_group, point_count)
             break
+        if player.x <= -10:
+            player_health = 0
+
+        speed_timer_1 = pg.time.get_ticks()
+        if speed_timer_1 - speed_timer_0 > 500:
+            SCREEN_VEL += 1
+            speed_timer_0 = speed_timer_1
+
         # These lines are for the sprites creation and updates 
         if screen_starter >= 1 or player.x > 100:
             first_lvl_group = sprite_creation_first_lvl(first_lvl_group)
             sprite_movement(first_lvl_group)
             start_line.x -= SCREEN_VEL
-        
+
+
         point_carrots_group = sprite_creation_points(point_carrots_group, carrot_list)
         terran_large_stone = sprite_creation_terran(terran_large_stone, large_stone_list)
         large_stone_hit_fence(first_lvl_group, terran_large_stone)
         carrot_hit_fence(first_lvl_group, point_carrots_group)
         keys_pressed = pg.key.get_pressed()
-        carrot_pick(point_carrots_group, player)
-        stone_hit(terran_large_stone, player) 
+        carrot_pick(point_carrots_group, player_sprite)
+        stone_hit(terran_large_stone, player_sprite) 
         player_hit(first_lvl_group, player)
 
         action_run, frame_run, new_x, new_y = player_movement(keys_pressed, player, still_player_image, last_update_player,

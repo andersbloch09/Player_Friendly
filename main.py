@@ -553,7 +553,7 @@ def main():
 
         speed_timer_1 = pg.time.get_ticks()
         if speed_timer_1 - speed_timer_0 > 500:
-            SCREEN_VEL += 1
+            # Put change in speed here if wanted
             speed_timer_0 = speed_timer_1
 
         # These lines are for the sprites creation and updates 

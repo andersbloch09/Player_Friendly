@@ -148,7 +148,7 @@ class avoid_object(pg.sprite.Sprite):
         image_size = self.image.get_size()
         hegn_til_anders = pg.transform.scale(self.hegn_til_anders, (20 * 1.5, 92 * 1.5))
         nrimages = image_size[1] // 92
-        if nrimages == 1: 
+        if nrimages <= 1: 
             nrimages += 1
         if self.rect.topleft[1] == -10: 
             j = -146
@@ -264,7 +264,7 @@ def sprite_creation_first_lvl(first_lvl_group):
         sprite_width = 20
         sprite_pos_y = 0 - 10
         sprite_pos_x = WIDTH - distance_between_poles
-        sprite_height = random.randint(100, 350)
+        sprite_height = random.randint(100, 625)
         # This variable desides the distance between the poles
         distance_between_poles -= 300
         object_number = avoid_object(sprite_width, sprite_height, sprite_pos_x, sprite_pos_y, (BLACK))

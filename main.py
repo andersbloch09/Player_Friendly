@@ -547,10 +547,10 @@ def main():
                 player.x = player.x - 200
         
             if event.type == CARROT_PICK: 
-                point_timer_0 -= 1000
+                point_timer_0 -= 5000
 
             if event.type == STONE_HIT:
-                point_timer_0 += 3000
+                point_timer_0 += 15000
 
         # Draw if you lose
         if player_health <= 0: 

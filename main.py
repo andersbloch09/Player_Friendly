@@ -18,7 +18,7 @@ RED = (255, 0, 0)
 
 # Velocities 
 PLAYER_VEL = 12
-SCREEN_VEL = 5
+SCREEN_VEL = 2
 SPRITE_VEL = SCREEN_VEL
 
 # Variable to control screenscroll start
@@ -109,7 +109,7 @@ class large_stone_one(pg.sprite.Sprite):
         global screen_starter
         global large_stone_list
         if screen_starter >= 1 or player.x > 100:
-            self.rect.x -= self.speed
+            self.rect.x -= SCREEN_VEL
             if self.rect.x <= -10:
                 self.kill()
                 if large_stone_list:
@@ -135,7 +135,7 @@ class avoid_object(pg.sprite.Sprite):
         global screen_starter
         global avoid_object_list
         if screen_starter >= 1 or player.x > 100:
-            self.rect.x -= self.speed
+            self.rect.x -= SCREEN_VEL
             if self.rect.x <= -10:
                 self.kill()
                 if avoid_object_list:
@@ -176,7 +176,7 @@ class point_object(pg.sprite.Sprite):
         global screen_starter
         global carrot_list
         if screen_starter >= 1 or player.x > 100:
-            self.rect.x -= self.speed
+            self.rect.x -= SCREEN_VEL
             if self.rect.x <= -10:
                 self.kill()
                 if carrot_list:
@@ -481,6 +481,12 @@ def draw_lose(player, green_world_move, first_lvl_group, start_line, player_heal
     pg.display.update()
     pg.time.delay(1000)
     
+def point_counter(point_timer_0):
+    point_timer_1 = pg.time.get_ticks()
+    point_count = point_timer_1 - point_timer_0
+
+    return point_count
+
 def main():
     global screen_starter
     global player
@@ -503,6 +509,7 @@ def main():
     hit_count = 0
     player_health = 3
     point_count = 0
+    SCREEN_VEL = 2
 
     # Counter for animation of character 
     sprite_sheet = PlayerSpriteSheet(sprite_sheet_image)
@@ -520,9 +527,12 @@ def main():
     clock = pg.time.Clock()
     run = True
 
+    # Sprite for player rect to check for colissions with the pygame functions 
     player_sprite = PlayerSprite(player)
-    speed_timer_0 = pg.time.get_ticks()
 
+    # Timers to control speed and points
+    speed_timer_0 = pg.time.get_ticks()
+    point_timer_0 = pg.time.get_ticks()
 
     while run:
         clock.tick(FPS)
@@ -535,13 +545,13 @@ def main():
             if event.type == PLAYER_HIT:
                 hit_count += 1
                 player_health -= 1
-                player.x = player.x - 100
+                player.x = player.x - 200
         
             if event.type == CARROT_PICK: 
-                point_count += 1
+                point_timer_0 -= 1000
 
             if event.type == STONE_HIT:
-                point_count -= 3
+                point_timer_0 += 3000
 
         # Draw if you lose
         if player_health <= 0: 
@@ -552,8 +562,15 @@ def main():
             player_health = 0
 
         speed_timer_1 = pg.time.get_ticks()
-        if speed_timer_1 - speed_timer_0 > 500:
+        if speed_timer_1 - speed_timer_0 > 5000:
             # Put change in speed here if wanted
+            if SCREEN_VEL < 4:
+                SCREEN_VEL += 1
+            if point_count > 30000 and SCREEN_VEL < 5:
+                SCREEN_VEL += 1
+            if point_count > 60000 and SCREEN_VEL < 6:
+                SCREEN_VEL += 1
+            print(SCREEN_VEL)
             speed_timer_0 = speed_timer_1
 
         # These lines are for the sprites creation and updates 
@@ -561,7 +578,7 @@ def main():
             first_lvl_group = sprite_creation_first_lvl(first_lvl_group)
             sprite_movement(first_lvl_group)
             start_line.x -= SCREEN_VEL
-
+            point_count = point_counter(point_timer_0)
 
         point_carrots_group = sprite_creation_points(point_carrots_group, carrot_list)
         terran_large_stone = sprite_creation_terran(terran_large_stone, large_stone_list)

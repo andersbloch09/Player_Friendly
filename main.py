@@ -1,4 +1,3 @@
-from typing import Any
 import pygame as pg
 import random
 import platform

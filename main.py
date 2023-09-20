@@ -118,6 +118,7 @@ class large_stone_one(pg.sprite.Sprite):
     
     def draw(self): 
         WIN.blit(self.image, (self.rect.topleft[0], self.rect.topleft[1]))
+     
 
 # Class for creation of sprites for poles 
 class avoid_object(pg.sprite.Sprite):
@@ -218,11 +219,10 @@ def sprite_creation_points(point_carrots_group, carrot_list):
     return point_carrots_group
 
 
-
 def create_large_stone(terran_large_stone, large_stone_list):
     global screen_starter
 
-    if len(large_stone_list) < 2:
+    if len(large_stone_list) < 3:
         if screen_starter == 0:
             pos_x = random.randint(101, 1750)
             pos_y = random.randint(0, 750)
@@ -340,7 +340,7 @@ def draw_window(player, green_world_move, first_lvl_group, start_line, player_he
 
     # Displays points
     point_count = POINT_FONT.render(
-        "Carrots: " + str(point_count), 1, WHITE)
+        "Points: " + str(point_count), 1, WHITE)
 
     WIN.blit(point_count, (300, 10))
     WIN.blit(player_health, (10, 10))
@@ -482,7 +482,7 @@ def draw_lose(player, green_world_move, first_lvl_group, start_line, player_heal
     
 def point_counter(point_timer_0):
     point_timer_1 = pg.time.get_ticks()
-    point_count = point_timer_1 - point_timer_0
+    point_count = (point_timer_1 - point_timer_0)//100
 
     return point_count
 
@@ -547,10 +547,10 @@ def main():
                 player.x = player.x - 200
         
             if event.type == CARROT_PICK: 
-                point_timer_0 -= 5000
+                point_timer_0 -= 50000
 
             if event.type == STONE_HIT:
-                point_timer_0 += 15000
+                point_timer_0 += 150000
 
         # Draw if you lose
         if player_health <= 0: 
@@ -565,9 +565,9 @@ def main():
             # Put change in speed here if wanted
             if SCREEN_VEL < 4:
                 SCREEN_VEL += 1
-            if point_count > 30000 and SCREEN_VEL < 5:
+            if point_count > 2000 and SCREEN_VEL < 5:
                 SCREEN_VEL += 1
-            if point_count > 60000 and SCREEN_VEL < 6:
+            if point_count > 10000 and SCREEN_VEL < 6:
                 SCREEN_VEL += 1
             print(SCREEN_VEL)
             speed_timer_0 = speed_timer_1

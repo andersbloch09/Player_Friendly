@@ -1,7 +1,7 @@
 import pygame as pg
 import random
 import platform
-from extract_player_image import extract_player_image
+from extract_player_image import extract_player_image, extract_player_image_fall
 
 pg.font.init()
 pg.mixer.init()
@@ -47,9 +47,9 @@ pg.display.set_caption('Player friendly.')
 
 # Player size of rect
 player_WIDTH = 25
-player_HEIGHT = 25
+player_HEIGHT = 40/3
 
-player = pg.Rect(0, 0, player_WIDTH, player_HEIGHT)
+# player = pg.Rect(0, 0, player_WIDTH, player_HEIGHT)
 
 #This is the main background 
 system_type = platform.system()
@@ -59,6 +59,7 @@ if system_type == "Darwin":
     GREEN_WORLD = pg.transform.scale(pg.image.load('Assets/GreenWorld.PNG'), (WIDTH, HEIGHT)) 
     large_stone_image = pg.image.load("Assets/Small_stones_above_grey.png").convert_alpha()
     sprite_sheet_image = pg.image.load("Assets/walking_assets_player_friendly_1.png")
+    sprite_sheet_image_fall = pg.image.load("Assets/hit_fence_assets_done.png")
     hegn_til_anders = pg.image.load("Assets/HegnTilAnders.png")
     large_carrot = pg.image.load("Assets/large_carrot.png")
 elif system_type == "Windows":
@@ -66,6 +67,7 @@ elif system_type == "Windows":
     GREEN_WORLD = pg.transform.scale(pg.image.load('Assets\GreenWorld.PNG'), (WIDTH, HEIGHT)) 
     large_stone_image = pg.image.load("Assets\Small_stones_above_grey.png").convert_alpha()
     sprite_sheet_image = pg.image.load("Assets\walking_assets_player_friendly_1.png")
+    sprite_sheet_image_fall = pg.image.load("Assets\hit_fence_assets_done.png")
     hegn_til_anders = pg.image.load("Assets\HegnTilAnders.png")
     large_carrot = pg.image.load("Assets\large_carrot.png")
 
@@ -384,7 +386,7 @@ def player_movement(keys_pressed, player, still_player_image, last_update_player
         action_run = 0 
         new_y = 0
         new_x = 0
-    if keys_pressed[pg.K_w] and player.y > 0:
+    if keys_pressed[pg.K_w] and player.y > 5:
         player.y -= PLAYER_VEL
         action_run = 1
         new_y = 0
@@ -396,10 +398,10 @@ def player_movement(keys_pressed, player, still_player_image, last_update_player
         new_x = 0
 
     # This controls the side walk 
-    if keys_pressed[pg.K_d] and keys_pressed[pg.K_w] and player.x < WIDTH - player_WIDTH*3 and player.y > 0:
+    if keys_pressed[pg.K_d] and keys_pressed[pg.K_w] and player.x < WIDTH - player_WIDTH*3 and player.y > 5:
         action_run = 4
         new_x, new_y = get_center_coords(still_player_image)
-    if keys_pressed[pg.K_w] and keys_pressed[pg.K_a] and player.x > 0 and player.y > 0:
+    if keys_pressed[pg.K_w] and keys_pressed[pg.K_a] and player.x > 0 and player.y > 5:
         action_run = 5
         new_x, new_y = get_center_coords(still_player_image)
     if keys_pressed[pg.K_a] and keys_pressed[pg.K_s] and player.x > 0 and player.y < HEIGHT - player_HEIGHT*3:
@@ -518,7 +520,23 @@ def main():
     action_run = 8
     new_x = 0
     new_y = 0
-    
+
+
+
+
+
+
+
+################################ here extract animation_fall and check if it is correct  ###################
+################################ if so make a function running the animation in a certain###################
+################################ speed while the player is unable to move                ###################
+
+
+    # Variables for fall animation
+    sprite_sheet_fall = PlayerSpriteSheet(sprite_sheet_image_fall)
+    # Function from other doc
+    animation_list_fall = extract_player_image_fall(sprite_sheet_fall)
+
     # Init function to save the animation images
     animation_list = extract_player_image(sprite_sheet)
     still_player_image = pg.transform.rotate(animation_list[0][0], 315)
@@ -565,9 +583,9 @@ def main():
             # Put change in speed here if wanted
             if SCREEN_VEL < 4:
                 SCREEN_VEL += 1
-            if point_count > 2000 and SCREEN_VEL < 5:
+            if point_count > 5000 and SCREEN_VEL < 5:
                 SCREEN_VEL += 1
-            if point_count > 10000 and SCREEN_VEL < 6:
+            if point_count > 15000 and SCREEN_VEL < 6:
                 SCREEN_VEL += 1
             print(SCREEN_VEL)
             speed_timer_0 = speed_timer_1

@@ -413,6 +413,16 @@ def player_movement(keys_pressed, player, still_player_image, last_update_player
     
     return action_run, frame_run, new_x, new_y
 
+# THIS FUNCTION NEEDS WORK ******************
+
+def fall_animation(animation_cooldown, animation_list_fall):
+    current_time = pg.time.get_ticks()
+    if current_time - last_update_player >= animation_cooldown:
+        frame_run += 1
+        last_update_player = current_time
+        if frame_run == 4: 
+            frame_run = 0
+
 # This function decides when the screen will move and how fast 
 def screen_movement(player, green_world_move, action_run):
     global screen_starter
@@ -520,10 +530,6 @@ def main():
     action_run = 8
     new_x = 0
     new_y = 0
-
-
-
-
 
 
 

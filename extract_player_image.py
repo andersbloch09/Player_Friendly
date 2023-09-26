@@ -10,7 +10,9 @@ def extract_player_image_fall(sprite_sheet):
         temp_img_list.append(sprite_sheet.get_image(x, 25, 35, 3.2))
 
     animation_list.append(temp_img_list)
-    print(animation_list)
+    
+
+
     return animation_list
 
 def extract_player_image(sprite_sheet): 
@@ -54,11 +56,21 @@ def extract_player_image(sprite_sheet):
             
         animation_list.append(temp_img_list)
 
-
+    # Extracts still standning 
     temp_img_list = []
     for x in range(11): 
         image = temp_img_list.append(sprite_sheet.get_image(0, 25, 25, 3))
         
+    animation_list.append(temp_img_list)
+    
+    # Extract invisible
+    temp_img_list = []
+    for x in range(11):
+        image = sprite_sheet.get_image(0, 25, 25, 3)
+        if image:
+            image.set_alpha(0)
+        temp_img_list.append(image)
+
     animation_list.append(temp_img_list)
 
     return animation_list

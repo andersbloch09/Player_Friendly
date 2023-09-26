@@ -72,9 +72,10 @@ elif system_type == "Windows":
     large_carrot = pg.image.load("Assets\large_carrot.png")
 
 # Events based on the game progress
-PLAYER_HIT = pg.USEREVENT + 1
-CARROT_PICK = pg.USEREVENT + 2
-STONE_HIT = pg.USEREVENT + 3
+PLAYER_HIT_FRONT = pg.USEREVENT + 1
+PLAYER_HIT_BACK = pg.USEREVENT + 2
+CARROT_PICK = pg.USEREVENT + 3
+STONE_HIT = pg.USEREVENT + 4
 
 # Creates Text fonts 
 HEALTH_FONT = pg.font.SysFont('comicsans', 40)
@@ -220,7 +221,7 @@ def sprite_creation_points(point_carrots_group, carrot_list):
 
     return point_carrots_group
 
-
+# Creates stones
 def create_large_stone(terran_large_stone, large_stone_list):
     global screen_starter
 
@@ -442,9 +443,17 @@ def player_hit(first_lvl_group, player):
     player_sprite = PlayerSprite(player)
     collided_sprites = pg.sprite.spritecollide(player_sprite, first_lvl_group, False)
 
+    if collided_sprites:
+        print(abs(player.x + 40 - collided_sprites[0].rect.x))
+
     if not hit_occured and len(collided_sprites) == 1:
         hit_occured = True
-        pg.event.post(pg.event.Event(PLAYER_HIT))
+        if abs(player.x + 40 - collided_sprites[0].rect.x) < 20: 
+            pg.event.post(pg.event.Event(PLAYER_HIT_FRONT))
+            
+        elif abs((player.x + 40) - collided_sprites[0].rect.x) > 20:
+            pg.event.post(pg.event.Event(PLAYER_HIT_BACK))
+
     elif hit_occured and len(collided_sprites) < 1: 
         hit_occured = False
 
@@ -532,7 +541,6 @@ def main():
     new_y = 0
 
 
-
 ################################ here extract animation_fall and check if it is correct  ###################
 ################################ if so make a function running the animation in a certain###################
 ################################ speed while the player is unable to move                ###################
@@ -542,7 +550,9 @@ def main():
     sprite_sheet_fall = PlayerSpriteSheet(sprite_sheet_image_fall)
     # Function from other doc
     animation_list_fall = extract_player_image_fall(sprite_sheet_fall)
-
+    # Variable to detect if fall is happening
+    fall = 0
+    
     # Init function to save the animation images
     animation_list = extract_player_image(sprite_sheet)
     still_player_image = pg.transform.rotate(animation_list[0][0], 315)
@@ -565,10 +575,15 @@ def main():
                 pg.quit()
 
             # Event for player hit 
-            if event.type == PLAYER_HIT:
+            if event.type == PLAYER_HIT_FRONT:
                 hit_count += 1
                 player_health -= 1
                 player.x = player.x - 200
+
+            if event.type == PLAYER_HIT_BACK:
+                hit_count += 1
+                player_health -= 1
+                player.x = player.x + 200
         
             if event.type == CARROT_PICK: 
                 point_timer_0 -= 50000
@@ -581,19 +596,18 @@ def main():
             draw_lose(player, green_world_move, first_lvl_group, start_line, player_health,
                        terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, point_carrots_group, point_count)
             break
-        if player.x <= -10:
+        if player.x <= -20:
             player_health = 0
 
         speed_timer_1 = pg.time.get_ticks()
         if speed_timer_1 - speed_timer_0 > 5000:
             # Put change in speed here if wanted
-            if SCREEN_VEL < 4:
+            if SCREEN_VEL < 4 and point_count > 4000:
                 SCREEN_VEL += 1
             if point_count > 5000 and SCREEN_VEL < 5:
                 SCREEN_VEL += 1
             if point_count > 15000 and SCREEN_VEL < 6:
                 SCREEN_VEL += 1
-            print(SCREEN_VEL)
             speed_timer_0 = speed_timer_1
 
         # These lines are for the sprites creation and updates 
@@ -612,7 +626,8 @@ def main():
         stone_hit(terran_large_stone, player_sprite) 
         player_hit(first_lvl_group, player)
 
-        action_run, frame_run, new_x, new_y = player_movement(keys_pressed, player, still_player_image, last_update_player,
+        if fall == 0: 
+            action_run, frame_run, new_x, new_y = player_movement(keys_pressed, player, still_player_image, last_update_player,
                                                        animation_cooldown, frame_run, action_run, new_x, new_y)
 
 

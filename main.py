@@ -412,17 +412,35 @@ def player_movement(keys_pressed, player, still_player_image, last_update_player
         action_run = 7
         new_x, new_y = get_center_coords(still_player_image)
     
-    return action_run, frame_run, new_x, new_y
+    return action_run, frame_run, new_x, new_y, last_update_player
 
-# THIS FUNCTION NEEDS WORK ******************
-
-def fall_animation(animation_cooldown, animation_list_fall):
+# This function should handle the animation time and movement for the fall animation
+def fall_animation(animation_cooldown_fall, last_update_player, frame_run, fall_front, fall_back, fall, action_run):
     current_time = pg.time.get_ticks()
-    if current_time - last_update_player >= animation_cooldown:
+    # This lines removes bugs with frame_run from other animations
+    if action_run < 10: 
+        frame_run = 0
+
+    if fall_front == True: 
+        action_run = 10
+        if frame_run < 4: 
+            player.x -= 7
+
+    if fall_back == True:
+        action_run = 11
+        if frame_run < 4: 
+            player.x += 7
+    
+    if current_time - last_update_player >= animation_cooldown_fall:
         frame_run += 1
         last_update_player = current_time
-        if frame_run == 4: 
+        if frame_run == 8: 
             frame_run = 0
+            fall_back = False 
+            fall_front = False
+            fall = 0
+
+    return action_run, frame_run, fall_front, fall_back, fall, last_update_player
 
 # This function decides when the screen will move and how fast 
 def screen_movement(player, green_world_move, action_run):
@@ -443,8 +461,8 @@ def player_hit(first_lvl_group, player):
     player_sprite = PlayerSprite(player)
     collided_sprites = pg.sprite.spritecollide(player_sprite, first_lvl_group, False)
 
-    if collided_sprites:
-        print(abs(player.x + 40 - collided_sprites[0].rect.x))
+    #if collided_sprites:
+        #print(abs(player.x + 40 - collided_sprites[0].rect.x))
 
     if not hit_occured and len(collided_sprites) == 1:
         hit_occured = True
@@ -472,6 +490,7 @@ def carrot_pick(point_carrots_group, player_sprite):
     elif hit_occured_carrot and len(collided_sprites) < 1: 
         hit_occured_carrot = False
 
+
 def stone_hit(terran_large_stone, player_sprite):
     global hit_occured_stone
     collided_sprites = pg.sprite.spritecollide(player_sprite, terran_large_stone, False)
@@ -481,13 +500,16 @@ def stone_hit(terran_large_stone, player_sprite):
     elif hit_occured_stone and len(collided_sprites) < 1: 
         hit_occured_stone = False
 
+
 def large_stone_hit_fence(first_lvl_group, terran_large_stone):
     # This line of code checks for collision between the two groups and removes the one from terran_large_stone chosen by the True, False.
     pg.sprite.groupcollide(first_lvl_group, terran_large_stone, False, True)
 
+
 def carrot_hit_fence(first_lvl_group, point_carrots_group):
     # This line of code checks for collision between the two groups and removes the one from point_carrots_group chosen by the True, False.
     pg.sprite.groupcollide(first_lvl_group, point_carrots_group, False, True)
+
 
 def draw_lose(player, green_world_move, first_lvl_group, start_line, player_health,
                terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, point_carrots_group, point_count):
@@ -500,12 +522,14 @@ def draw_lose(player, green_world_move, first_lvl_group, start_line, player_heal
                          2, HEIGHT/2 - draw_text.get_height()/2))
     pg.display.update()
     pg.time.delay(1000)
-    
+
+
 def point_counter(point_timer_0):
     point_timer_1 = pg.time.get_ticks()
     point_count = (point_timer_1 - point_timer_0)//100
 
     return point_count
+
 
 def main():
     global screen_starter
@@ -527,24 +551,18 @@ def main():
     point_carrots_group = pg.sprite.Group()
     green_world_move = pg.Rect(0, 0, WIDTH, HEIGHT)
     hit_count = 0
-    player_health = 3
+    player_health = 10000
     point_count = 0
     SCREEN_VEL = 2
 
     # Counter for animation of character 
     sprite_sheet = PlayerSpriteSheet(sprite_sheet_image)
     last_update_player = pg.time.get_ticks()
-    animation_cooldown = 75
+    animation_cooldown = 20
     frame_run = 0 
     action_run = 8
     new_x = 0
     new_y = 0
-
-
-################################ here extract animation_fall and check if it is correct  ###################
-################################ if so make a function running the animation in a certain###################
-################################ speed while the player is unable to move                ###################
-
 
     # Variables for fall animation
     sprite_sheet_fall = PlayerSpriteSheet(sprite_sheet_image_fall)
@@ -552,10 +570,16 @@ def main():
     animation_list_fall = extract_player_image_fall(sprite_sheet_fall)
     # Variable to detect if fall is happening
     fall = 0
-    
+    fall_front = 0
+    fall_back = 0
+    animation_cooldown_fall = 60
+
     # Init function to save the animation images
     animation_list = extract_player_image(sprite_sheet)
+    for x in range(len(animation_list_fall)):
+        animation_list.append(animation_list_fall[x])
     still_player_image = pg.transform.rotate(animation_list[0][0], 315)
+
 
     clock = pg.time.Clock()
     run = True
@@ -578,12 +602,14 @@ def main():
             if event.type == PLAYER_HIT_FRONT:
                 hit_count += 1
                 player_health -= 1
-                player.x = player.x - 200
+                fall_front = True 
+                fall = 1
 
             if event.type == PLAYER_HIT_BACK:
                 hit_count += 1
                 player_health -= 1
-                player.x = player.x + 200
+                fall_back = True
+                fall = 1
         
             if event.type == CARROT_PICK: 
                 point_timer_0 -= 50000
@@ -625,16 +651,18 @@ def main():
         carrot_pick(point_carrots_group, player_sprite)
         stone_hit(terran_large_stone, player_sprite) 
         player_hit(first_lvl_group, player)
-
+        
         if fall == 0: 
-            action_run, frame_run, new_x, new_y = player_movement(keys_pressed, player, still_player_image, last_update_player,
+            action_run, frame_run, new_x, new_y, last_update_player = player_movement(keys_pressed, player, still_player_image, last_update_player,
                                                        animation_cooldown, frame_run, action_run, new_x, new_y)
 
+        if fall == 1:
+            action_run, frame_run, fall_front, fall_back, fall, last_update_player = fall_animation(animation_cooldown_fall, last_update_player, frame_run, fall_front, fall_back, fall, action_run)
 
         action_run = screen_movement(player, green_world_move, action_run)
         draw_window(player, green_world_move, first_lvl_group, start_line, player_health,
                      terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, point_carrots_group, point_count)
-
+        
     main()
 
 if __name__ == "__main__":

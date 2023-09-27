@@ -11,7 +11,14 @@ def extract_player_image_fall(sprite_sheet):
 
     animation_list.append(temp_img_list)
     
+    temp_img_list = []
+    for x in range(8):
+        image = pg.transform.rotate(animation_list[0][x], 180)
 
+        temp_img_list.append(image)
+
+    animation_list.append(temp_img_list)
+    
 
     return animation_list
 
@@ -36,11 +43,7 @@ def extract_player_image(sprite_sheet):
         temp_img_list = []
         for x in range(11):
             image = pg.transform.rotate(animation_list[0][x], j)
-
-            rect = image.get_rect()
-            center = rect.center
             
-
             temp_img_list.append(image)
 
         animation_list.append(temp_img_list)

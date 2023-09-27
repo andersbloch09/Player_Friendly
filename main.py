@@ -628,7 +628,7 @@ def main():
         speed_timer_1 = pg.time.get_ticks()
         if speed_timer_1 - speed_timer_0 > 5000:
             # Put change in speed here if wanted
-            if SCREEN_VEL < 4 and point_count > 4000:
+            if SCREEN_VEL < 4:
                 SCREEN_VEL += 1
             if point_count > 5000 and SCREEN_VEL < 5:
                 SCREEN_VEL += 1

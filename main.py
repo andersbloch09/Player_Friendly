@@ -387,31 +387,36 @@ def player_movement(keys_pressed, player, still_player_image, last_update_player
         action_run = 0 
         new_y = 0
         new_x = 0
-    if keys_pressed[pg.K_w] and player.y > 5:
+    if keys_pressed[pg.K_w]:
         player.y -= PLAYER_VEL
         action_run = 1
         new_y = 0
         new_x = 0
-    if keys_pressed[pg.K_s] and player.y < HEIGHT - player_HEIGHT*3:
+    if keys_pressed[pg.K_s]:
         player.y += PLAYER_VEL
         action_run = 3
         new_y = 0
         new_x = 0
 
     # This controls the side walk 
-    if keys_pressed[pg.K_d] and keys_pressed[pg.K_w] and player.x < WIDTH - player_WIDTH*3 and player.y > 5:
+    if keys_pressed[pg.K_d] and keys_pressed[pg.K_w] and player.x < WIDTH - player_WIDTH*3:
         action_run = 4
         new_x, new_y = get_center_coords(still_player_image)
-    if keys_pressed[pg.K_w] and keys_pressed[pg.K_a] and player.x > 0 and player.y > 5:
+    if keys_pressed[pg.K_w] and keys_pressed[pg.K_a] and player.x > 0:
         action_run = 5
         new_x, new_y = get_center_coords(still_player_image)
-    if keys_pressed[pg.K_a] and keys_pressed[pg.K_s] and player.x > 0 and player.y < HEIGHT - player_HEIGHT*3:
+    if keys_pressed[pg.K_a] and keys_pressed[pg.K_s] and player.x > 0:
         action_run = 6
         new_x, new_y = get_center_coords(still_player_image)
-    if keys_pressed[pg.K_s] and keys_pressed[pg.K_d] and player.x < WIDTH - player_WIDTH*3 and player.y < HEIGHT - player_HEIGHT*3:
+    if keys_pressed[pg.K_s] and keys_pressed[pg.K_d] and player.x < WIDTH - player_WIDTH*3:
         action_run = 7
         new_x, new_y = get_center_coords(still_player_image)
     
+    if player.y < -player_HEIGHT*3: 
+        player.y = HEIGHT
+    if player.y > HEIGHT + player_HEIGHT*3:
+        player.y = 0
+
     return action_run, frame_run, new_x, new_y, last_update_player
 
 # This function should handle the animation time and movement for the fall animation

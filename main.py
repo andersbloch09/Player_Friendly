@@ -428,18 +428,18 @@ def fall_animation(animation_cooldown_fall, last_update_player, frame_run, fall_
 
     if fall_front == True: 
         action_run = 10
-        if frame_run < 4: 
+        if frame_run < 6: 
             player.x -= 7
 
     if fall_back == True:
         action_run = 11
-        if frame_run < 4: 
+        if frame_run < 6: 
             player.x += 7
-    
+
     if current_time - last_update_player >= animation_cooldown_fall:
         frame_run += 1
         last_update_player = current_time
-        if frame_run == 8: 
+        if frame_run == 16: 
             frame_run = 0
             fall_back = False 
             fall_front = False
@@ -556,7 +556,7 @@ def main():
     point_carrots_group = pg.sprite.Group()
     green_world_move = pg.Rect(0, 0, WIDTH, HEIGHT)
     hit_count = 0
-    player_health = 3
+    player_health = 10000
     point_count = 0
     SCREEN_VEL = 2
 
@@ -577,14 +577,13 @@ def main():
     fall = 0
     fall_front = 0
     fall_back = 0
-    animation_cooldown_fall = 60
+    animation_cooldown_fall = 50
 
     # Init function to save the animation images
     animation_list = extract_player_image(sprite_sheet)
     for x in range(len(animation_list_fall)):
         animation_list.append(animation_list_fall[x])
     still_player_image = pg.transform.rotate(animation_list[0][0], 315)
-
 
     clock = pg.time.Clock()
     run = True

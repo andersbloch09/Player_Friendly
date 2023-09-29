@@ -4,15 +4,19 @@ def extract_player_image_fall(sprite_sheet):
     temp_img_list = []
     animation_list = []
 
-    for x in range(0, 4, 1):
+    for x in range(0, 5, 1):
         temp_img_list.append(sprite_sheet.get_image(x, 25, 35, 3.2))
-    for x in range(4, 0, -1): 
+
+    for x in range(6):
+        temp_img_list.append(sprite_sheet.get_image(5, 25, 35, 3.2))
+
+    for x in range(5, 0, -1): 
         temp_img_list.append(sprite_sheet.get_image(x, 25, 35, 3.2))
 
     animation_list.append(temp_img_list)
     
     temp_img_list = []
-    for x in range(8):
+    for x in range(16):
         image = pg.transform.rotate(animation_list[0][x], 180)
 
         temp_img_list.append(image)

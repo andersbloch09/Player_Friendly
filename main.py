@@ -551,7 +551,7 @@ def main():
     point_carrots_group = pg.sprite.Group()
     green_world_move = pg.Rect(0, 0, WIDTH, HEIGHT)
     hit_count = 0
-    player_health = 10000
+    player_health = 3
     point_count = 0
     SCREEN_VEL = 2
 

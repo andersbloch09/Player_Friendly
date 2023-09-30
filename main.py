@@ -16,7 +16,7 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 
 # Velocities 
-PLAYER_VEL = 12
+PLAYER_VEL = 8
 SCREEN_VEL = 2
 SPRITE_VEL = SCREEN_VEL
 
@@ -56,20 +56,20 @@ system_type = platform.system()
 
 if system_type == "Darwin":
     print("macOS")
-    GREEN_WORLD = pg.transform.scale(pg.image.load('Assets/GreenWorld.PNG'), (WIDTH, HEIGHT)) 
+    GREEN_WORLD = pg.transform.scale(pg.image.load('Assets/GreenWorld.PNG').convert(), (WIDTH, HEIGHT)) 
     large_stone_image = pg.image.load("Assets/Small_stones_above_grey.png").convert_alpha()
-    sprite_sheet_image = pg.image.load("Assets/walking_assets_player_friendly_1.png")
-    sprite_sheet_image_fall = pg.image.load("Assets/hit_fence_assets_done.png")
-    hegn_til_anders = pg.image.load("Assets/HegnTilAnders.png")
-    large_carrot = pg.image.load("Assets/large_carrot.png")
+    sprite_sheet_image = pg.image.load("Assets/walking_assets_player_friendly_1.png").convert_alpha()
+    sprite_sheet_image_fall = pg.image.load("Assets/hit_fence_assets_done.png").convert_alpha()
+    hegn_til_anders = pg.image.load("Assets/HegnTilAnders.png").convert_alpha()
+    large_carrot = pg.image.load("Assets/large_carrot.png").convert_alpha()
 elif system_type == "Windows":
     print("Windows")
-    GREEN_WORLD = pg.transform.scale(pg.image.load('Assets\GreenWorld.PNG'), (WIDTH, HEIGHT)) 
+    GREEN_WORLD = pg.transform.scale(pg.image.load('Assets\GreenWorld.PNG').convert(), (WIDTH, HEIGHT)) 
     large_stone_image = pg.image.load("Assets\Small_stones_above_grey.png").convert_alpha()
-    sprite_sheet_image = pg.image.load("Assets\walking_assets_player_friendly_1.png")
-    sprite_sheet_image_fall = pg.image.load("Assets\hit_fence_assets_done.png")
-    hegn_til_anders = pg.image.load("Assets\HegnTilAnders.png")
-    large_carrot = pg.image.load("Assets\large_carrot.png")
+    sprite_sheet_image = pg.image.load("Assets\walking_assets_player_friendly_1.png").convert_alpha()
+    sprite_sheet_image_fall = pg.image.load("Assets\hit_fence_assets_done.png").convert_alpha()
+    hegn_til_anders = pg.image.load("Assets\HegnTilAnders.png").convert_alpha()
+    large_carrot = pg.image.load("Assets\large_carrot.png").convert_alpha()
 
 # Events based on the game progress
 PLAYER_HIT_FRONT = pg.USEREVENT + 1
@@ -122,7 +122,6 @@ class large_stone_one(pg.sprite.Sprite):
     def draw(self): 
         WIN.blit(self.image, (self.rect.topleft[0], self.rect.topleft[1]))
      
-
 # Class for creation of sprites for poles 
 class avoid_object(pg.sprite.Sprite):
     def __init__(self, width, height, pos_x, pos_y, color):
@@ -350,6 +349,7 @@ def draw_window(player, green_world_move, first_lvl_group, start_line, player_he
 
     # This draws the player 
     # pg.draw.rect(WIN, BLACK, player)
+    print(action_run, frame_run)
     WIN.blit(animation_list[action_run][frame_run], ((player.x - 18) + new_x, (player.y - 18) + new_y))
     # This updates everything onto the screen
     pg.display.update()
@@ -518,7 +518,7 @@ def carrot_hit_fence(first_lvl_group, point_carrots_group):
 
 def draw_lose(player, green_world_move, first_lvl_group, start_line, player_health,
                terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, point_carrots_group, point_count):
-    
+    frame_run = 0
     draw_window(player, green_world_move, first_lvl_group, start_line, player_health,
                  terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, point_carrots_group, point_count)
     
@@ -584,9 +584,8 @@ def main():
     for x in range(len(animation_list_fall)):
         animation_list.append(animation_list_fall[x])
     still_player_image = pg.transform.rotate(animation_list[0][0], 315)
-
     # User interface variables
-    user_interface = 0
+    user_interface = 1
 
     # Sprite for player rect to check for colissions with the pygame functions 
     player_sprite = PlayerSprite(player)
@@ -623,6 +622,7 @@ def main():
 
             if event.type == STONE_HIT:
                 point_timer_0 += 150000
+
         # Draw if you lose
         if player_health <= 0: 
             draw_lose(player, green_world_move, first_lvl_group, start_line, player_health,
@@ -638,7 +638,7 @@ def main():
                 SCREEN_VEL += 1
             if point_count > 5000 and SCREEN_VEL < 5:
                 SCREEN_VEL += 1
-            if point_count > 15000 and SCREEN_VEL < 6:
+            if point_count > 10000 and SCREEN_VEL < 6:
                 SCREEN_VEL += 1
             speed_timer_0 = speed_timer_1
 

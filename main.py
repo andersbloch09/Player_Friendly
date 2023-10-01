@@ -365,7 +365,7 @@ def get_center_coords(image):
 	return new_x, new_y
 
 # This function creates the movement for the player
-def player_movement(keys_pressed, player, still_player_image, last_update_player, animation_cooldown, frame_run, action_run, new_x, new_y):
+def player_movement(keys_pressed, player, still_player_image, last_update_player, animation_cooldown, frame_run, action_run, new_x, new_y, screen_starter):
     current_time = pg.time.get_ticks()
     if current_time - last_update_player >= animation_cooldown:
         frame_run += 1
@@ -376,6 +376,8 @@ def player_movement(keys_pressed, player, still_player_image, last_update_player
     new_x = 0
     if not any(keys_pressed):
         action_run = 8
+    if player.x <= 0 and screen_starter >= 1:
+        action_run = 0
     # This controls straight walks
     if keys_pressed[pg.K_a] and player.x > 0:
         player.x -= PLAYER_VEL
@@ -414,9 +416,9 @@ def player_movement(keys_pressed, player, still_player_image, last_update_player
     
     if player.y < -player_HEIGHT*3: 
         player.y = HEIGHT
-    if player.y > HEIGHT + player_HEIGHT*3:
-        player.y = 0
-
+    if player.y > HEIGHT:
+        player.y = -player_HEIGHT*3
+        
     return action_run, frame_run, new_x, new_y, last_update_player
 
 # This function should handle the animation time and movement for the fall animation
@@ -448,18 +450,14 @@ def fall_animation(animation_cooldown_fall, last_update_player, frame_run, fall_
     return action_run, frame_run, fall_front, fall_back, fall, last_update_player
 
 # This function decides when the screen will move and how fast 
-def screen_movement(player, green_world_move, action_run):
+def screen_movement(player, green_world_move):
     global screen_starter
     if screen_starter >= 1 or player.x > 100: 
         green_world_move.x -= SCREEN_VEL
         screen_starter += 1
         if player.x > 0:
             player.x += -SCREEN_VEL
-        if player.x <= 0: 
-            action_run = 0
     
-    return action_run
-
 # This function check colission of objects and the player 
 def player_hit(first_lvl_group, player):
     global hit_occured
@@ -625,10 +623,11 @@ def main():
 
         # Draw if you lose
         if player_health <= 0: 
+            frame_run = 0
             draw_lose(player, green_world_move, first_lvl_group, start_line, player_health,
                     terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, point_carrots_group, point_count)
             break
-        if player.x <= -20:
+        if player.x <= -15:
             player_health = 0
 
         speed_timer_1 = pg.time.get_ticks()
@@ -648,7 +647,7 @@ def main():
             sprite_movement(first_lvl_group)
             start_line.x -= SCREEN_VEL
             point_count = point_counter(point_timer_0)
-
+        
         point_carrots_group = sprite_creation_points(point_carrots_group, carrot_list)
         terran_large_stone = sprite_creation_terran(terran_large_stone, large_stone_list)
         large_stone_hit_fence(first_lvl_group, terran_large_stone)
@@ -661,14 +660,13 @@ def main():
         if user_interface == 1: 
             if fall == 0: 
                 action_run, frame_run, new_x, new_y, last_update_player = player_movement(keys_pressed, player, still_player_image, last_update_player,
-                                                        animation_cooldown, frame_run, action_run, new_x, new_y)
+                                                        animation_cooldown, frame_run, action_run, new_x, new_y, screen_starter)
 
             if fall == 1:
                 action_run, frame_run, fall_front, fall_back, fall, last_update_player = fall_animation(animation_cooldown_fall, last_update_player, frame_run, fall_front, fall_back, fall, action_run)
 
-        
+        screen_movement(player, green_world_move)
 
-        action_run = screen_movement(player, green_world_move, action_run)
         draw_window(player, green_world_move, first_lvl_group, start_line, player_health,
                     terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, point_carrots_group, point_count)
         

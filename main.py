@@ -2,12 +2,15 @@ import pygame as pg
 import random
 import platform
 from extract_player_image import extract_player_image, extract_player_image_fall
+from Scale_function import calculate_scale_factors
 
-pg.font.init()
-pg.mixer.init()
+pg.init()
+
 
 # Width and Height of window 
 WIDTH, HEIGHT = 1800, 800
+
+scale_factor = calculate_scale_factors(WIDTH, HEIGHT)
 
 # Here are all the used global variables 
 FPS = 60
@@ -16,8 +19,8 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 
 # Velocities 
-PLAYER_VEL = 8
-SCREEN_VEL = 2
+PLAYER_VEL = 8 * scale_factor
+SCREEN_VEL = 2 * scale_factor
 SPRITE_VEL = SCREEN_VEL
 
 # Variable to control screenscroll start
@@ -41,13 +44,15 @@ carrot_list = []
 ##########################################################################
 
 # Makes the first display and its size
+#WIN = pg.display.set_mode((WIDTH * scale_factor, HEIGHT * scale_factor)) 
+# None scaled Change when done scaling
 WIN = pg.display.set_mode((WIDTH, HEIGHT)) 
 # Makes caption 
 pg.display.set_caption('Player friendly.')
 
 # Player size of rect
-player_WIDTH = 25
-player_HEIGHT = 40/3
+player_WIDTH = 25 * scale_factor
+player_HEIGHT = 40/3 * scale_factor
 
 # player = pg.Rect(0, 0, player_WIDTH, player_HEIGHT)
 
@@ -78,9 +83,9 @@ CARROT_PICK = pg.USEREVENT + 3
 STONE_HIT = pg.USEREVENT + 4
 
 # Creates Text fonts 
-HEALTH_FONT = pg.font.SysFont('comicsans', 40)
-POINT_FONT = pg.font.SysFont('comicsans', 40)
-LOSE_FONT = pg.font.SysFont('comicsans', 100)
+HEALTH_FONT = pg.font.SysFont('comicsans', int(40 * scale_factor))
+POINT_FONT = pg.font.SysFont('comicsans', int(40 * scale_factor))
+LOSE_FONT = pg.font.SysFont('comicsans', int(100 * scale_factor))
 
 #####################################################################################
 
@@ -349,7 +354,7 @@ def draw_window(player, green_world_move, first_lvl_group, start_line, player_he
 
     # This draws the player 
     # pg.draw.rect(WIN, BLACK, player)
-    print(action_run, frame_run)
+    # print(action_run, frame_run)
     WIN.blit(animation_list[action_run][frame_run], ((player.x - 18) + new_x, (player.y - 18) + new_y))
     # This updates everything onto the screen
     pg.display.update()

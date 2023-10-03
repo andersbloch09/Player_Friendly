@@ -100,7 +100,7 @@ class PlayerSpriteSheet():
 	def get_image(self, frame_run, width, height, scale):
 		image = pg.Surface((width, height), pg.SRCALPHA).convert_alpha()
 		image.blit(self.sheet, (0, 0), ((frame_run * width), 0, width, height))
-		image = pg.transform.scale(image, ((width * scale) * scale_factor, (height * scale) * scale_factor))
+		image = pg.transform.scale(image, (width * scale * scale_factor, height * scale * scale_factor))
 
 		return image
 
@@ -177,7 +177,9 @@ class avoid_object(pg.sprite.Sprite):
 class point_object(pg.sprite.Sprite):
     def __init__(self, pos_x, pos_y):
         pg.sprite.Sprite.__init__(self)
-        self.image = large_carrot
+        self.image = pg.Surface([int((57 * 0.7) * scale_factor), int((52 * 0.7) * scale_factor)])
+        self.image.fill(BLACK)
+        self.carrot = large_carrot
         self.rect = self.image.get_rect()
         self.rect.topleft = [pos_x, pos_y]
         self.speed = screen_vel
@@ -196,8 +198,8 @@ class point_object(pg.sprite.Sprite):
 
     def draw_carrot(self):
         # carrot is 57x52 in size before scaling
-        large_carrot = pg.transform.scale(self.image, (57 * 0.7, 52 * 0.7))
-        WIN.blit(large_carrot, (self.rect.topleft[0], self.rect.topleft[1]))
+        large_carrot_scaled = pg.transform.scale(self.carrot, (int((57 * 0.7) * scale_factor), int((52 * 0.7) * scale_factor)))
+        WIN.blit(large_carrot_scaled, (self.rect.topleft[0], self.rect.topleft[1]))
 
 class PlayerSprite(pg.sprite.Sprite):
     def __init__(self, player_rect):
@@ -273,7 +275,7 @@ def sprite_creation_first_lvl(first_lvl_group):
         sprite_pos_y = int(-10 * scale_factor)
         sprite_pos_x = WIDTH - distance_between_poles
         sprite_width = int(20 * scale_factor)
-        sprite_height = random.randint(100 * scale_factor, 625 * scale_factor)
+        sprite_height = random.randint(int(100 * scale_factor), int(625 * scale_factor))
         # This variable desides the distance between the poles
         distance_between_poles -= int(300 * scale_factor)
         
@@ -338,10 +340,11 @@ def draw_window(player, green_world_move, first_lvl_group, start_line, player_he
    
     # This function here draws the fences
     first_lvl_update(first_lvl_group)
-    first_lvl_group.draw(WIN)
+    #first_lvl_group.draw(WIN)
     # Draws the stones
     sprite_movement_terran(terran_large_stone)
     # Updates and draws carrots
+    #point_carrots_group.draw(WIN)
     point_object_update(point_carrots_group)
 
 ###################################################################################################
@@ -359,8 +362,8 @@ def draw_window(player, green_world_move, first_lvl_group, start_line, player_he
 
     # This draws the player 
     # print(action_run, frame_run)
-    WIN.blit(animation_list[action_run][frame_run], ((player.x - 18) + new_x * scale_factor, (player.y - 18) + new_y * scale_factor))
-    pg.draw.rect(WIN, BLACK, player)
+    WIN.blit(animation_list[action_run][frame_run], ((player.x - int(18 * scale_factor)) + new_x, (player.y - int(18 * scale_factor)) + new_y))
+    #pg.draw.rect(WIN, BLACK, player)
     # This updates everything onto the screen
     pg.display.update()
 
@@ -441,12 +444,12 @@ def fall_animation(animation_cooldown_fall, last_update_player, frame_run, fall_
     if fall_front == True: 
         action_run = 10
         if frame_run < 6: 
-            player.x -= 7
+            player.x -= 7 * scale_factor
 
     if fall_back == True:
         action_run = 11
         if frame_run < 6: 
-            player.x += 7
+            player.x += 7 * scale_factor
 
     if current_time - last_update_player >= animation_cooldown_fall:
         frame_run += 1
@@ -479,10 +482,10 @@ def player_hit(first_lvl_group, player):
 
     if not hit_occured and len(collided_sprites) == 1:
         hit_occured = True
-        if abs(player.x + int(40 * scale_factor) - collided_sprites[0].rect.x) < int(20 * scale_factor): 
+        if abs(player.x + int(40 * scale_factor) - collided_sprites[0].rect.x) < int(30 * scale_factor): 
             pg.event.post(pg.event.Event(PLAYER_HIT_FRONT))
             
-        elif abs((player.x + int(40 * scale_factor)) - collided_sprites[0].rect.x) > int(20 * scale_factor):
+        elif abs((player.x + int(40 * scale_factor)) - collided_sprites[0].rect.x) > int(30 * scale_factor):
             pg.event.post(pg.event.Event(PLAYER_HIT_BACK))
 
     elif hit_occured and len(collided_sprites) < 1: 
@@ -557,7 +560,7 @@ def main():
     # init of the starter variables
     distance_between_poles = 0
     screen_starter = 0
-    player = pg.Rect(0 * scale_factor, HEIGHT//2, player_WIDTH*3 * scale_factor, player_HEIGHT*3 * scale_factor)
+    player = pg.Rect(0 * scale_factor, HEIGHT//2, player_WIDTH*3, player_HEIGHT*3)
     start_line = pg.Rect(100 * scale_factor, 0 * scale_factor, 10 * scale_factor, 800 * scale_factor)
     first_lvl_group = pg.sprite.Group()
     terran_large_stone = pg.sprite.Group()

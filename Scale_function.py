@@ -12,14 +12,18 @@ def calculate_scale_factors(game_width, game_height):
     screen_width = screen_info.current_w
     screen_height = screen_info.current_h
 
-    # screen_width = 1600
-    # screen_height = 900
+
+    # These are test resolutions
+    # screen_width = 1366
+    # screen_height = 768
 
 
     if screen_width != target_width or screen_height != target_height:
         # Calculate the scaling factors
-        x_scale = screen_width / game_width
-        y_scale = screen_height / game_height
+        # x_scale = screen_width / game_width
+        # y_scale = screen_height / game_height
+        x_scale = screen_width / target_width
+        y_scale = screen_height / target_height
         scale_factor = min(x_scale, y_scale)
     else:
         scale_factor = 1

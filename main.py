@@ -3,6 +3,8 @@ import random
 import platform
 from extract_player_image import extract_player_image, extract_player_image_fall
 from Scale_function import calculate_scale_factors
+from update_and_hit_func import point_counter, sprite_movement, sprite_movement_terran, first_lvl_update, point_object_update, large_stone_hit_fence, carrot_hit_fence
+from user_interface import ui
 
 pg.init()
 
@@ -20,6 +22,7 @@ RED = (255, 0, 0)
 
 # Width and Height of window 
 WIDTH, HEIGHT = 1800 * scale_factor, 800 * scale_factor
+print(WIDTH, HEIGHT)
 
 # Velocities 
 player_vel = int(8 * scale_factor)
@@ -300,27 +303,6 @@ def sprite_creation_first_lvl(first_lvl_group):
             first_lvl_group.add(sprite)
         return first_lvl_group    
 
-# This function uses a callback to the class to update the individual sprite location
-def sprite_movement(first_lvl_group):
-    for sprite in first_lvl_group:
-        sprite.update_speed()
-
-# This updates the fence of the groups and draws them 
-def first_lvl_update(first_lvl_group):
-    for sprite in first_lvl_group:
-        sprite.add_image()
-
-# Draws the points
-def point_object_update(point_carrots_group):
-    for sprite in point_carrots_group:
-        sprite.update_speed()
-        sprite.draw_carrot()
-
-# This changes the speed of the stones
-def sprite_movement_terran(sprite_group):
-    for sprite in sprite_group:
-        sprite.update_speed()
-        sprite.draw()
 
 # Draws the content on the window
 def draw_window(player, green_world_move, first_lvl_group, start_line, player_health, 
@@ -517,16 +499,6 @@ def stone_hit(terran_large_stone, player_sprite):
         hit_occured_stone = False
 
 
-def large_stone_hit_fence(first_lvl_group, terran_large_stone):
-    # This line of code checks for collision between the two groups and removes the one from terran_large_stone chosen by the True, False.
-    pg.sprite.groupcollide(first_lvl_group, terran_large_stone, False, True)
-
-
-def carrot_hit_fence(first_lvl_group, point_carrots_group):
-    # This line of code checks for collision between the two groups and removes the one from point_carrots_group chosen by the True, False.
-    pg.sprite.groupcollide(first_lvl_group, point_carrots_group, False, True)
-
-
 def draw_lose(player, green_world_move, first_lvl_group, start_line, player_health,
                terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, point_carrots_group, point_count):
     frame_run = 0
@@ -538,13 +510,6 @@ def draw_lose(player, green_world_move, first_lvl_group, start_line, player_heal
                          2, HEIGHT/2 - draw_text.get_height()/2))
     pg.display.update()
     pg.time.delay(1000)
-
-
-def point_counter(point_timer_0):
-    point_timer_1 = pg.time.get_ticks()
-    point_count = (point_timer_1 - point_timer_0)//100
-
-    return point_count
 
 
 def main():
@@ -684,6 +649,9 @@ def main():
         draw_window(player, green_world_move, first_lvl_group, start_line, player_health,
                     terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, point_carrots_group, point_count)
         
+        if user_interface == 0:
+            ui()
+
     main()
 
 if __name__ == "__main__":

@@ -8,11 +8,12 @@ def calculate_scale_factors(game_width, game_height):
 
     # Get the current screen resolution
     screen_info = pg.display.Info()
-    screen_width = screen_info.current_w
-    screen_height = screen_info.current_h
 
-    #screen_width = 1920
-    #screen_height = 1080
+    #screen_width = screen_info.current_w
+    #screen_height = screen_info.current_h
+
+    screen_width = 1440
+    screen_height = 900
 
 
 

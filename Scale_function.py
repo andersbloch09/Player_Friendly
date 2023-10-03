@@ -11,8 +11,8 @@ def calculate_scale_factors(game_width, game_height):
     screen_width = screen_info.current_w
     screen_height = screen_info.current_h
 
-    #screen_width = 2400
-    #creen_height = 1500
+    #screen_width = 1920
+    #screen_height = 1080
 
 
 

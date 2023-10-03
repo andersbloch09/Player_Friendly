@@ -8,9 +8,9 @@ pg.init()
 
 
 # Width and Height of window 
-WIDTH, HEIGHT = 1800, 800
+width, height = 1800, 800
 
-scale_factor = calculate_scale_factors(WIDTH, HEIGHT)
+scale_factor = calculate_scale_factors(width, height)
 
 # Here are all the used global variables 
 FPS = 60
@@ -18,9 +18,12 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 
+# Width and Height of window 
+WIDTH, HEIGHT = 1800 * scale_factor, 800 * scale_factor
+
 # Velocities 
-PLAYER_VEL = 8 * scale_factor
-SCREEN_VEL = 2 * scale_factor
+PLAYER_VEL = int(8 * scale_factor)
+SCREEN_VEL = int(2 * scale_factor)
 SPRITE_VEL = SCREEN_VEL
 
 # Variable to control screenscroll start
@@ -141,9 +144,9 @@ class avoid_object(pg.sprite.Sprite):
     def update_speed(self):
         global screen_starter
         global avoid_object_list
-        if screen_starter >= 1 or player.x > 100:
+        if screen_starter >= 1 or player.x > int(100 * scale_factor):
             self.rect.x -= SCREEN_VEL
-            if self.rect.x <= -10:
+            if self.rect.x <= int(-10 * scale_factor):
                 self.kill()
                 if avoid_object_list:
                     avoid_object_list.pop(0)
@@ -153,22 +156,22 @@ class avoid_object(pg.sprite.Sprite):
 # This need a lot of logic work 
     def add_image(self):
         image_size = self.image.get_size()
-        hegn_til_anders = pg.transform.scale(self.hegn_til_anders, (20 * 1.5, 92 * 1.5))
-        nrimages = image_size[1] // 92
+        hegn_til_anders = pg.transform.scale(self.hegn_til_anders, (int(20 * 1.5 * scale_factor), int(92 * 1.5 * scale_factor)))
+        nrimages = image_size[1] // int(92 * scale_factor)
         if nrimages <= 1: 
             nrimages += 1
-        if self.rect.topleft[1] == -10: 
-            j = -146
+        if self.rect.topleft[1] == int(-10 * scale_factor): 
+            j = int(-146 * scale_factor)
             rotated_image = pg.transform.rotate(hegn_til_anders, 180)
             for i in range(nrimages):
-                WIN.blit(rotated_image, (self.rect.topleft[0] - 5, image_size[1] + j))
-                j -= 130
+                WIN.blit(rotated_image, (self.rect.topleft[0] - int(5 * scale_factor), image_size[1] + j))
+                j -= int(130 * scale_factor)
 
         if self.rect.topleft[1] > 0: 
             j = 0
             for i in range(nrimages):
-                WIN.blit(hegn_til_anders, (self.rect.topleft[0] - 5, 818 - image_size[1] + j))
-                j += 130
+                WIN.blit(hegn_til_anders, (self.rect.topleft[0] - int(5 * scale_factor), int(818 * scale_factor) - image_size[1] + j))
+                j += int(130 * scale_factor) 
 
 # Creates the points as carrots or other things and controls them
 class point_object(pg.sprite.Sprite):
@@ -267,21 +270,22 @@ def sprite_creation_first_lvl(first_lvl_group):
     global avoid_object_list
     # Top Sprite 
     if len(avoid_object_list) < 12:
-        sprite_width = 20
-        sprite_pos_y = 0 - 10
+        sprite_pos_y = int(-10 * scale_factor)
         sprite_pos_x = WIDTH - distance_between_poles
-        sprite_height = random.randint(100, 625)
+        sprite_width = int(20 * scale_factor)
+        sprite_height = random.randint(100 * scale_factor, 625 * scale_factor)
         # This variable desides the distance between the poles
-        distance_between_poles -= 300
+        distance_between_poles -= int(300 * scale_factor)
+        
         object_number = avoid_object(sprite_width, sprite_height, sprite_pos_x, sprite_pos_y, (BLACK))
         avoid_object_list.append(object_number)
     
         # Bottom Sprite
-        sprite_width = 20
+        sprite_width = int(20 * scale_factor)
         # This line is made to get the correct distance between the poles on each side
-        sprite_height = 800 - (sprite_height + 75)
+        sprite_height = int(800 * scale_factor) - sprite_height + int(75 * scale_factor)
         
-        sprite_pos_y = HEIGHT - sprite_height + 20
+        sprite_pos_y = HEIGHT - sprite_height + int(20 * scale_factor)
         object_number = avoid_object(sprite_width, sprite_height, sprite_pos_x, sprite_pos_y, (BLACK))
         avoid_object_list.append(object_number)
         for sprite in avoid_object_list:
@@ -327,13 +331,14 @@ def draw_window(player, green_world_move, first_lvl_group, start_line, player_he
         green_world_move.x = 0
 
     # This draws the start line 
-    if start_line.x > -10:
+    if start_line.x > int(-10 * scale_factor):
         pg.draw.rect(WIN, RED, start_line)
    
 ###################################################################################################
    
     # This function here draws the fences
     first_lvl_update(first_lvl_group)
+    first_lvl_group.draw(WIN)
     # Draws the stones
     sprite_movement_terran(terran_large_stone)
     # Updates and draws carrots
@@ -349,13 +354,13 @@ def draw_window(player, green_world_move, first_lvl_group, start_line, player_he
     point_count = POINT_FONT.render(
         "Points: " + str(point_count), 1, WHITE)
 
-    WIN.blit(point_count, (300, 10))
-    WIN.blit(player_health, (10, 10))
+    WIN.blit(point_count, (int(300 * scale_factor), int(10 * scale_factor)))
+    WIN.blit(player_health, (int(10 * scale_factor), int(10 * scale_factor)))
 
     # This draws the player 
-    # pg.draw.rect(WIN, BLACK, player)
     # print(action_run, frame_run)
-    WIN.blit(animation_list[action_run][frame_run], ((player.x - 18) + new_x, (player.y - 18) + new_y))
+    WIN.blit(animation_list[action_run][frame_run], ((player.x - 18) + new_x * scale_factor, (player.y - 18) + new_y * scale_factor))
+    pg.draw.rect(WIN, BLACK, player)
     # This updates everything onto the screen
     pg.display.update()
 
@@ -457,10 +462,10 @@ def fall_animation(animation_cooldown_fall, last_update_player, frame_run, fall_
 # This function decides when the screen will move and how fast 
 def screen_movement(player, green_world_move):
     global screen_starter
-    if screen_starter >= 1 or player.x > 100: 
+    if screen_starter >= 1 or player.x > 100 * scale_factor: 
         green_world_move.x -= SCREEN_VEL
         screen_starter += 1
-        if player.x > 0:
+        if player.x > 0 * scale_factor:
             player.x += -SCREEN_VEL
     
 # This function check colission of objects and the player 
@@ -474,10 +479,10 @@ def player_hit(first_lvl_group, player):
 
     if not hit_occured and len(collided_sprites) == 1:
         hit_occured = True
-        if abs(player.x + 40 - collided_sprites[0].rect.x) < 20: 
+        if abs(player.x + int(40 * scale_factor) - collided_sprites[0].rect.x) < int(20 * scale_factor): 
             pg.event.post(pg.event.Event(PLAYER_HIT_FRONT))
             
-        elif abs((player.x + 40) - collided_sprites[0].rect.x) > 20:
+        elif abs((player.x + int(40 * scale_factor)) - collided_sprites[0].rect.x) > int(20 * scale_factor):
             pg.event.post(pg.event.Event(PLAYER_HIT_BACK))
 
     elif hit_occured and len(collided_sprites) < 1: 
@@ -552,16 +557,16 @@ def main():
     # init of the starter variables
     distance_between_poles = 0
     screen_starter = 0
-    player = pg.Rect(0, HEIGHT//2, 40, 40)
-    start_line = pg.Rect(100, 0, 10, 800)
+    player = pg.Rect(0 * scale_factor, HEIGHT//2 * scale_factor, 40 * scale_factor, 40 * scale_factor)
+    start_line = pg.Rect(100 * scale_factor, 0 * scale_factor, 10 * scale_factor, 800 * scale_factor)
     first_lvl_group = pg.sprite.Group()
     terran_large_stone = pg.sprite.Group()
     point_carrots_group = pg.sprite.Group()
-    green_world_move = pg.Rect(0, 0, WIDTH, HEIGHT)
+    green_world_move = pg.Rect(0 * scale_factor, 0 * scale_factor, WIDTH * scale_factor, HEIGHT * scale_factor)
     hit_count = 0
     player_health = 10000
     point_count = 0
-    SCREEN_VEL = 2
+    SCREEN_VEL = int(2 * scale_factor)
 
     # Counter for animation of character 
     sprite_sheet = PlayerSpriteSheet(sprite_sheet_image)
@@ -639,7 +644,7 @@ def main():
         if speed_timer_1 - speed_timer_0 > 5000:
             # Put change in speed here if wanted
             if SCREEN_VEL < 4:
-                SCREEN_VEL += 1
+                SCREEN_VEL += 1 
             if point_count > 5000 and SCREEN_VEL < 5:
                 SCREEN_VEL += 1
             if point_count > 10000 and SCREEN_VEL < 6:

@@ -612,13 +612,13 @@ def main():
         if speed_timer_1 - speed_timer_0 > 5000:
             # Put change in speed here if wanted
             if screen_vel < 4 * scale_factor:
-                screen_vel += 1*scale_factor
+                screen_vel += 1
             if point_count > 5000 and screen_vel < 5:
-                screen_vel += 1*scale_factor 
+                screen_vel += 1 
             if point_count > 10000 and screen_vel < 6:
-                screen_vel += 1*scale_factor 
+                screen_vel += 1
             speed_timer_0 = speed_timer_1
-            screen_vel = screen_vel * scale_factor
+            
 
         # These lines are for the sprites creation and updates 
         if screen_starter >= 1 or player.x > int(100 * scale_factor):

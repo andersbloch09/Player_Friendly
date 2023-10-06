@@ -5,6 +5,7 @@ from extract_player_image import extract_player_image, extract_player_image_fall
 from Scale_function import calculate_scale_factors
 from update_and_hit_func import point_counter, sprite_movement, sprite_movement_terran, first_lvl_update, point_object_update, large_stone_hit_fence, carrot_hit_fence
 from user_interface import ui
+from sys import exit
 
 pg.init()
 
@@ -579,6 +580,7 @@ def main():
             if event.type == pg.QUIT:
                 run = False
                 pg.quit()
+                exit()
 
             # Event for player hit 
             if event.type == PLAYER_HIT_FRONT:

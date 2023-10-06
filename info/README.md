@@ -11,4 +11,3 @@ pyinstaller line:
  
 pyinstaller --windowed --noconsole --onefile --icon=C:\Users\ander\Desktop\Works\Pythoncode\Player_Friendly\icon\player_friendly_icon.ico main.py
 
-pyinstaller --windowed --noconsole --onefile --icon=C:/Users/ander/Desktop/Works/Pythoncode/Player_Friendly/icon/player_friendly_icon.ico main.py

@@ -1,9 +1,10 @@
 import pygame as pg
+import time
 
 def point_counter(point_timer_0):
-    point_timer_1 = pg.time.get_ticks()
-    point_count = (point_timer_1 - point_timer_0)//100
-
+    point_scale = 13
+    point_timer_1 = time.time()
+    point_count = (point_timer_1 - point_timer_0) * point_scale
     return point_count
 
 # This changes the speed of the stones

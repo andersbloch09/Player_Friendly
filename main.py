@@ -6,6 +6,7 @@ from Scale_function import calculate_scale_factors
 from update_and_hit_func import point_counter, sprite_movement, sprite_movement_terran, first_lvl_update, point_object_update, large_stone_hit_fence, carrot_hit_fence
 from user_interface import ui
 from sys import exit
+import time 
 
 pg.init()
 
@@ -337,6 +338,7 @@ def draw_window(player, green_world_move, first_lvl_group, start_line, player_he
         "Health: " + str(player_health), 1, WHITE)
 
     # Displays points
+    point_count = format(point_count, ".0f")
     point_count = POINT_FONT.render(
         "Points: " + str(point_count), 1, WHITE)
 
@@ -519,6 +521,7 @@ def main():
     global distance_between_poles
     global large_stone_list
     global screen_vel
+    global player_vel
     # List clearing to avoid large ram issues
     avoid_object_list.clear()
     large_stone_list.clear()
@@ -536,6 +539,7 @@ def main():
     player_health = 10000
     point_count = 0
     screen_vel = int(2 * scale_factor)
+    player_vel = int(8 * scale_factor)
 
     # Counter for animation of character 
     sprite_sheet = PlayerSpriteSheet(sprite_sheet_image)
@@ -568,8 +572,8 @@ def main():
     player_sprite = PlayerSprite(player)
 
     # Timers to control speed and points
-    speed_timer_0 = pg.time.get_ticks()
-    point_timer_0 = pg.time.get_ticks()
+    speed_timer_0 = time.time()
+    point_timer_0 = time.time()
 
     clock = pg.time.Clock()
     run = True
@@ -596,10 +600,10 @@ def main():
                 fall = 1
         
             if event.type == CARROT_PICK: 
-                point_timer_0 -= 50000
+                point_timer_0 -= 10
 
             if event.type == STONE_HIT:
-                point_timer_0 += 150000
+                point_timer_0 += 25
 
         # Draw if you lose
         if player_health <= 0: 
@@ -610,17 +614,21 @@ def main():
         if player.x <= -15:
             player_health = 0
 
-        speed_timer_1 = pg.time.get_ticks()
-        if speed_timer_1 - speed_timer_0 > 5000:
+        speed_timer_1 = time.time()
+        if speed_timer_1 - speed_timer_0 > 10:
             # Put change in speed here if wanted
+            if screen_vel < 3 * scale_factor:
+                screen_vel += 1
+                speed_timer_0 = speed_timer_1
+        if speed_timer_1 - speed_timer_0 > 25:
             if screen_vel < 4 * scale_factor:
                 screen_vel += 1
-            if point_count > 5000 and screen_vel < 5:
-                screen_vel += 1 
-            if point_count > 10000 and screen_vel < 6:
-                screen_vel += 1
-            speed_timer_0 = speed_timer_1
-            
+                speed_timer_0 = speed_timer_1
+        if point_count > 5000 and screen_vel < 5 * scale_factor: 
+            player_vel += 1 
+            screen_vel += 1 
+        print(screen_vel)
+        print(player_vel)
 
         # These lines are for the sprites creation and updates 
         if screen_starter >= 1 or player.x > int(100 * scale_factor):
@@ -628,6 +636,9 @@ def main():
             sprite_movement(first_lvl_group)
             start_line.x -= screen_vel
             point_count = point_counter(point_timer_0)
+        # This line makes the point timer restart until the game actually starts 
+        else:
+            point_timer_0 = time.time()
         
         point_carrots_group = sprite_creation_points(point_carrots_group, carrot_list)
         terran_large_stone = sprite_creation_terran(terran_large_stone, large_stone_list)
@@ -653,7 +664,9 @@ def main():
         
         if user_interface == 0:
             ui()
-
+        # Checks for button reset of game
+        if keys_pressed[pg.K_PLUS]:
+            main()
     main()
 
 if __name__ == "__main__":

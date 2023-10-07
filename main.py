@@ -628,7 +628,6 @@ def main():
             player_vel += 1 
             screen_vel += 1 
         print(screen_vel)
-        print(player_vel)
 
         # These lines are for the sprites creation and updates 
         if screen_starter >= 1 or player.x > int(100 * scale_factor):

@@ -119,13 +119,14 @@ class large_stone_one(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.topleft = [pos_x, pos_y]
         self.speed = screen_vel
+        self.initial_width = initial_width
 
     def update_speed(self):
         global screen_starter
         global large_stone_list
         if screen_starter >= 1 or player.x > 100 * scale_factor:
             self.rect.x -= screen_vel
-            if self.rect.x <= -10 * scale_factor:
+            if self.rect.x <= -self.initial_width * scale_factor:
                 self.kill()
                 if large_stone_list:
                     large_stone_list.pop(0)
@@ -194,7 +195,7 @@ class point_object(pg.sprite.Sprite):
         global carrot_list
         if screen_starter >= 1 or player.x > 100 * scale_factor:
             self.rect.x -= screen_vel
-            if self.rect.x <= -10 * scale_factor:
+            if self.rect.x <= int(-(57 * 0.7) * scale_factor) * scale_factor:
                 self.kill()
                 if carrot_list:
                     carrot_list.pop(0)
@@ -448,7 +449,7 @@ def fall_animation(animation_cooldown_fall, last_update_player, frame_run, fall_
     return action_run, frame_run, fall_front, fall_back, fall, last_update_player
 
 # This function decides when the screen will move and how fast 
-def screen_movement(player, green_world_move):
+def screen_movement(player, green_world_move, point_count, screen_vel, player_vel, speed_timer_0):
     global screen_starter
     if screen_starter >= 1 or player.x > 100 * scale_factor: 
         green_world_move.x -= screen_vel
@@ -456,6 +457,22 @@ def screen_movement(player, green_world_move):
         if player.x > 0 * scale_factor:
             player.x += -screen_vel
     
+    speed_timer_1 = time.time()
+    if speed_timer_1 - speed_timer_0 > 10:
+        # Put change in speed here if wanted
+        if screen_vel < 3 * scale_factor:
+            screen_vel += 1
+            speed_timer_0 = speed_timer_1
+    if speed_timer_1 - speed_timer_0 > 25:
+        if screen_vel < 4 * scale_factor:
+            screen_vel += 1
+            speed_timer_0 = speed_timer_1
+    if point_count > 5000 and screen_vel < 5 * scale_factor: 
+        player_vel += 1 
+        screen_vel += 1 
+    #print(screen_vel)
+    return screen_vel, player_vel
+
 # This function check colission of objects and the player 
 def player_hit(first_lvl_group, player):
     global hit_occured
@@ -614,21 +631,6 @@ def main():
         if player.x <= -15:
             player_health = 0
 
-        speed_timer_1 = time.time()
-        if speed_timer_1 - speed_timer_0 > 10:
-            # Put change in speed here if wanted
-            if screen_vel < 3 * scale_factor:
-                screen_vel += 1
-                speed_timer_0 = speed_timer_1
-        if speed_timer_1 - speed_timer_0 > 25:
-            if screen_vel < 4 * scale_factor:
-                screen_vel += 1
-                speed_timer_0 = speed_timer_1
-        if point_count > 5000 and screen_vel < 5 * scale_factor: 
-            player_vel += 1 
-            screen_vel += 1 
-        print(screen_vel)
-
         # These lines are for the sprites creation and updates 
         if screen_starter >= 1 or player.x > int(100 * scale_factor):
             first_lvl_group = sprite_creation_first_lvl(first_lvl_group)
@@ -656,7 +658,7 @@ def main():
             if fall == 1:
                 action_run, frame_run, fall_front, fall_back, fall, last_update_player = fall_animation(animation_cooldown_fall, last_update_player, frame_run, fall_front, fall_back, fall, action_run)
 
-        screen_movement(player, green_world_move)
+        screen_vel, player_vel = screen_movement(player, green_world_move, point_count, screen_vel, player_vel, speed_timer_0)
 
         draw_window(player, green_world_move, first_lvl_group, start_line, player_health,
                     terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, point_carrots_group, point_count)

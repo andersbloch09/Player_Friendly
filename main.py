@@ -39,9 +39,6 @@ hit_occured = False
 hit_occured_carrot = False
 hit_occured_stone = False
 
-# change of the variable
-distance_between_poles = 0
-
 # List with sprites of different kinds for env
 avoid_object_list = []
 large_stone_list = []
@@ -245,7 +242,7 @@ def create_large_stone(terran_large_stone, large_stone_list):
             pos_x = random.randint(int(101 * scale_factor), int(1750 * scale_factor))
             pos_y = random.randint(int(0 * scale_factor), int(750 * scale_factor))
         else:
-            pos_x = WIDTH
+            pos_x = WIDTH + 100
             pos_y = random.randint(int(0 * scale_factor), int(750 * scale_factor))
             
         initial_width, initial_height = int(65 * scale_factor), int(65 * scale_factor)
@@ -274,17 +271,19 @@ def sprite_creation_terran(terran_large_stone, large_stone_list):
 
 # Function which creates the sprites both on bottom and on top
 def sprite_creation_first_lvl(first_lvl_group):
-    global distance_between_poles
     global avoid_object_list
     # Top Sprite 
-    if len(avoid_object_list) < 12:
+    if len(avoid_object_list) < 16:
+        if not avoid_object_list:
+            sprite_pos_x = WIDTH
+        else: 
+            # This here creates the position for the next fence to be the distance chosen away from last sprite in the sprite group
+            distance_to_next_fence = 300
+            newest = first_lvl_group.sprites()[-1] 
+            sprite_pos_x = newest.rect.x + distance_to_next_fence
         sprite_pos_y = int(-10 * scale_factor)
-        sprite_pos_x = WIDTH - distance_between_poles
         sprite_width = int(20 * scale_factor)
         sprite_height = random.randint(int(100 * scale_factor), int(625 * scale_factor))
-        # This variable desides the distance between the poles
-        distance_between_poles -= int(300 * scale_factor)
-        
         object_number = avoid_object(sprite_width, sprite_height, sprite_pos_x, sprite_pos_y, (BLACK))
         avoid_object_list.append(object_number)
     
@@ -301,7 +300,6 @@ def sprite_creation_first_lvl(first_lvl_group):
 
         return(first_lvl_group)
     else:
-        distance_between_poles = 0
         for sprite in avoid_object_list:
             first_lvl_group.add(sprite)
         return first_lvl_group    
@@ -535,7 +533,6 @@ def draw_lose(player, green_world_move, first_lvl_group, start_line, player_heal
 def main():
     global screen_starter
     global player
-    global distance_between_poles
     global large_stone_list
     global screen_vel
     global player_vel
@@ -544,7 +541,6 @@ def main():
     large_stone_list.clear()
     carrot_list.clear()
     # init of the starter variables
-    distance_between_poles = 0
     screen_starter = 0
     player = pg.Rect(0 * scale_factor, HEIGHT//2, player_WIDTH*3, player_HEIGHT*3)
     start_line = pg.Rect(100 * scale_factor, 0 * scale_factor, 10 * scale_factor, 800 * scale_factor)

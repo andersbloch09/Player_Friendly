@@ -1,6 +1,5 @@
 import pygame as pg
 import random
-import platform
 from extract_player_image import extract_player_image, extract_player_image_fall
 from Scale_function import calculate_scale_factors
 from update_and_hit_func import point_counter, sprite_movement, sprite_movement_terran, first_lvl_update, point_object_update, large_stone_hit_fence, carrot_hit_fence
@@ -61,25 +60,25 @@ player_HEIGHT = 40/3 * scale_factor
 
 # player = pg.Rect(0, 0, player_WIDTH, player_HEIGHT)
 
-#This is the main background 
-system_type = platform.system()
+GREEN_WORLD = pg.transform.scale(pg.image.load('Assets/GreenWorld.PNG').convert(), (WIDTH, HEIGHT)) 
+large_stone_image = pg.image.load("Assets/Small_stones_above_grey.png").convert_alpha()
+sprite_sheet_image = pg.image.load("Assets/walking_assets_player_friendly_1.png").convert_alpha()
+sprite_sheet_image_fall = pg.image.load("Assets/hit_fence_assets_done.png").convert_alpha()
+hegn_til_anders = pg.image.load("Assets/HegnTilAnders.png").convert_alpha()
+large_carrot = pg.image.load("Assets/large_carrot.png").convert_alpha()
 
-if system_type == "Darwin":
-    print("macOS")
-    GREEN_WORLD = pg.transform.scale(pg.image.load('Assets/GreenWorld.PNG').convert(), (WIDTH, HEIGHT)) 
-    large_stone_image = pg.image.load("Assets/Small_stones_above_grey.png").convert_alpha()
-    sprite_sheet_image = pg.image.load("Assets/walking_assets_player_friendly_1.png").convert_alpha()
-    sprite_sheet_image_fall = pg.image.load("Assets/hit_fence_assets_done.png").convert_alpha()
-    hegn_til_anders = pg.image.load("Assets/HegnTilAnders.png").convert_alpha()
-    large_carrot = pg.image.load("Assets/large_carrot.png").convert_alpha()
-elif system_type == "Windows":
-    print("Windows")
-    GREEN_WORLD = pg.transform.scale(pg.image.load('Assets\GreenWorld.PNG').convert(), (WIDTH, HEIGHT)) 
-    large_stone_image = pg.image.load("Assets\Small_stones_above_grey.png").convert_alpha()
-    sprite_sheet_image = pg.image.load("Assets\walking_assets_player_friendly_1.png").convert_alpha()
-    sprite_sheet_image_fall = pg.image.load("Assets\hit_fence_assets_done.png").convert_alpha()
-    hegn_til_anders = pg.image.load("Assets\HegnTilAnders.png").convert_alpha()
-    large_carrot = pg.image.load("Assets\large_carrot.png").convert_alpha()
+##########################################################################################################
+# UI sprites
+add_button = pg.image.load("Assets/ui_assets/add_button.png").convert_alpha()
+add_button_clicked = pg.image.load("Assets/ui_assets/add_button_clicked.png").convert_alpha()
+arrow_button = pg.image.load("Assets/ui_assets/arrow.png").convert_alpha()
+arrow_button_clicked = pg.image.load("Assets/ui_assets/arrow_clicked.png").convert_alpha()
+remove_button = pg.image.load("Assets/ui_assets/remove.png").convert_alpha()
+remove_button_clicked = pg.image.load("Assets/ui_assets/remove_clicked.png").convert_alpha()
+start_button = pg.image.load("Assets/ui_assets/start_button.png").convert_alpha()
+start_button_clicked = pg.image.load("Assets/ui_assets/start_button_clicked.png").convert_alpha()
+table_sign = pg.image.load("Assets/ui_assets/table_sign.png").convert_alpha()
+
 
 # Events based on the game progress
 PLAYER_HIT_FRONT = pg.USEREVENT + 1
@@ -156,7 +155,7 @@ class avoid_object(pg.sprite.Sprite):
                 else: 
                     pass
 
-# This need a lot of logic work 
+# Adds the images of the fences to the sprites so it fits
     def add_image(self):
         image_size = self.image.get_size()
         hegn_til_anders = pg.transform.scale(self.hegn_til_anders, (int(20 * 1.5 * scale_factor), int(92 * 1.5 * scale_factor)))

@@ -1,15 +1,22 @@
 import pygame as pg
-import json
 from cryptography.fernet import Fernet
 import base64
 
+point_count = 1010231651
 
-point_count = 1010230
+# Class for ui buttons
+class buttons(pg.sprite.Sprite):
+    def __init__(self, pos_x, pos_y, initial_width, initial_height, image):
+        pg.sprite.Sprite.__init__(self)
+        self.image = image
+        self.image = pg.transform.scale(self.image, (initial_width, initial_height))
+        self.rect = self.image.get_rect()
+        self.rect.topleft = [pos_x, pos_y]
+        
 
 class User:
     def __init__(self, username):
         self.user_name = username
-
     def add_data():
         pass
     def check_score(): 
@@ -49,8 +56,6 @@ def search_key():
     except FileNotFoundError:
         pass
 
-def draw_ui():
-    pass
 
 def save_data(encoded_key, encrypted_score):
 
@@ -60,6 +65,24 @@ def save_data(encoded_key, encrypted_score):
     
     with open(r"Assets\placeholders\placeholder.txt", "w") as file:
         file.write(encoded_key)
+
+def read_data():
+    # Opens both files as read to get the data after it decodes the data
+    with open(r"Assets\placeholders\rating.txt", "r") as file:
+        encrypted_data = file.read()
+    
+    with open(r"Assets\placeholders\placeholder.txt", "r") as file:
+        secret_key = file.read()
+
+    decoded_key = decode_key(secret_key)
+    cipher_suite = Fernet(decoded_key)
+
+    decrypted_data = decrypt_data(encrypted_data, cipher_suite)
+
+    print(decrypted_data)
+
+def draw_ui():
+    pass
 
 def ui(point_count):
 
@@ -72,15 +95,15 @@ def ui(point_count):
     cipher_suite = Fernet(secret_key)
     
     encrypted_score = encrypt_data(point_count, cipher_suite)
-    decrypted_score = decrypt_data(encrypted_score, cipher_suite)
+    
     encoded_key = encode_key(secret_key)
-    decoded_key = decode_key(encoded_key)
+    
 
     #print("encrypt", encrypted_score)
     #print("decrypt", decrypted_score)
 
     save_data(encoded_key, encrypted_score)
-
+    read_data()
 
 
 

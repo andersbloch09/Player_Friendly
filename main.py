@@ -662,7 +662,8 @@ def main():
         if user_interface == 0:
             ui()
         # Checks for button reset of game
-        if keys_pressed[pg.K_PLUS]:
+        # Peter sige det skal være space
+        if keys_pressed[pg.K_SPACE]:
             main()
     main()
 

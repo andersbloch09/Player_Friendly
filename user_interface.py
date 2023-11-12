@@ -49,7 +49,7 @@ def decode_key(encoded_key):
 def search_key():
     # Load existing highscores if the file exists
     try:
-        with open(r"Assets\placeholders\placeholder.txt", "r") as file:
+        with open(r"Assets/placeholders/placeholder.txt", "r") as file:
             encoded_key = file.read()
             decoded_key = decode_key(encoded_key)
             return decoded_key
@@ -60,18 +60,18 @@ def search_key():
 def save_data(encoded_key, encrypted_score):
 
     # Save the encrypted data to the file
-    with open(r"Assets\placeholders\rating.txt", "wb") as file:
+    with open(r"Assets/placeholders/rating.txt", "wb") as file:
         file.write(encrypted_score)
     
-    with open(r"Assets\placeholders\placeholder.txt", "w") as file:
+    with open(r"Assets/placeholders/placeholder.txt", "w") as file:
         file.write(encoded_key)
 
 def read_data():
     # Opens both files as read to get the data after it decodes the data
-    with open(r"Assets\placeholders\rating.txt", "r") as file:
+    with open(r"Assets/placeholders/rating.txt", "rb") as file:
         encrypted_data = file.read()
     
-    with open(r"Assets\placeholders\placeholder.txt", "r") as file:
+    with open(r"Assets/placeholders/placeholder.txt", "r") as file:
         secret_key = file.read()
 
     decoded_key = decode_key(secret_key)

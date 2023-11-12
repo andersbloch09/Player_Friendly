@@ -61,7 +61,7 @@ player_HEIGHT = 40/3 * scale_factor
 # player = pg.Rect(0, 0, player_WIDTH, player_HEIGHT)
 
 GREEN_WORLD = pg.transform.scale(pg.image.load('Assets/GreenWorld.PNG').convert(), (WIDTH, HEIGHT)) 
-large_stone_image = pg.image.load("Assets/Small_stones_above_grey.png").convert_alpha()
+large_stone_image = pg.image.load("Assets\large_stone_2.PNG").convert_alpha()
 sprite_sheet_image = pg.image.load("Assets/walking_assets_player_friendly_1.png").convert_alpha()
 sprite_sheet_image_fall = pg.image.load("Assets/hit_fence_assets_done.png").convert_alpha()
 hegn_til_anders = pg.image.load("Assets/HegnTilAnders.png").convert_alpha()
@@ -110,8 +110,10 @@ class large_stone_one(pg.sprite.Sprite):
     def __init__(self, pos_x, pos_y, initial_width, initial_height):
         pg.sprite.Sprite.__init__(self)
         # Note consider loading the image outside of the class
+        #self.surface = pg.Surface([initial_width, initial_height])
+        #self.surface.fill(BLACK)
         self.image = large_stone_image
-        self.image = pg.transform.scale(self.image, (initial_width, initial_height))
+        self.image = pg.transform.smoothscale(self.image, (initial_width, initial_height))
         self.rect = self.image.get_rect()
         self.rect.topleft = [pos_x, pos_y]
         self.speed = screen_vel
@@ -130,6 +132,7 @@ class large_stone_one(pg.sprite.Sprite):
                     pass
     
     def draw(self): 
+        #WIN.blit(self.surface,(self.rect.x, self.rect.y))
         WIN.blit(self.image, (self.rect.topleft[0], self.rect.topleft[1]))
      
 # Class for creation of sprites for poles 
@@ -200,7 +203,7 @@ class point_object(pg.sprite.Sprite):
 
     def draw_carrot(self):
         # carrot is 57x52 in size before scaling
-        large_carrot_scaled = pg.transform.scale(self.carrot, (int((57 * 0.7) * scale_factor), int((52 * 0.7) * scale_factor)))
+        large_carrot_scaled = pg.transform.smoothscale(self.carrot, (int((57 * 0.7) * scale_factor), int((52 * 0.7) * scale_factor)))
         WIN.blit(large_carrot_scaled, (self.rect.topleft[0], self.rect.topleft[1]))
 
 class PlayerSprite(pg.sprite.Sprite):
@@ -244,7 +247,7 @@ def create_large_stone(terran_large_stone, large_stone_list):
             pos_x = WIDTH + 100
             pos_y = random.randint(int(0 * scale_factor), int(750 * scale_factor))
             
-        initial_width, initial_height = int(65 * scale_factor), int(65 * scale_factor)
+        initial_width, initial_height = int(70 * scale_factor), int(70 * scale_factor)
 
         stone = large_stone_one(pos_x, pos_y, initial_width, initial_height)
         large_stone_list.append(stone)
@@ -319,7 +322,6 @@ def draw_window(player, green_world_move, first_lvl_group, start_line, player_he
         pg.draw.rect(WIN, RED, start_line)
    
 ###################################################################################################
-   
     # This function here draws the fences
     first_lvl_update(first_lvl_group)
     #first_lvl_group.draw(WIN)
@@ -328,7 +330,6 @@ def draw_window(player, green_world_move, first_lvl_group, start_line, player_he
     # Updates and draws carrots
     #point_carrots_group.draw(WIN)
     point_object_update(point_carrots_group)
-
 ###################################################################################################
 
     # Displays health 

@@ -60,7 +60,7 @@ player_HEIGHT = 40/3 * scale_factor
 
 # player = pg.Rect(0, 0, player_WIDTH, player_HEIGHT)
 
-GREEN_WORLD = pg.transform.scale(pg.image.load('Assets/GreenWorld.PNG').convert(), (WIDTH, HEIGHT)) 
+GREEN_WORLD = pg.transform.scale(pg.image.load('Assets/GreenWorld2.PNG').convert(), (WIDTH, HEIGHT)) 
 large_stone_image = pg.image.load("Assets\large_stone_3.PNG").convert_alpha()
 sprite_sheet_image = pg.image.load("Assets/walking_assets_player_friendly_1.png").convert_alpha()
 sprite_sheet_image_fall = pg.image.load("Assets/hit_fence_assets_done.png").convert_alpha()

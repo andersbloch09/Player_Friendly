@@ -29,7 +29,7 @@ def extract_player_image_fall(sprite_sheet):
 def extract_player_image(sprite_sheet): 
     temp_img_list = []
     animation_list = []
-
+    # This is for walking straight
     for x in range(3):
         temp_img_list.append(sprite_sheet.get_image(x, 25, 25, 3))
     for x in range(3, 0, -1):
@@ -42,8 +42,8 @@ def extract_player_image(sprite_sheet):
     animation_list.append(temp_img_list)
 
 
+    # This is for walking straight in the different directions 
     for j in range(90, 360, 90):
-        
         temp_img_list = []
         for x in range(11):
             image = pg.transform.rotate(animation_list[0][x], j)
@@ -51,7 +51,7 @@ def extract_player_image(sprite_sheet):
             temp_img_list.append(image)
 
         animation_list.append(temp_img_list)
-
+    # This is for walking sideways in the different directions
     for j in range(45, 360, 90):
         
         temp_img_list = []

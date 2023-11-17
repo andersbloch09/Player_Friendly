@@ -225,10 +225,11 @@ def sprite_creation_points(point_carrots_group, carrot_list):
             pos_y = random.randint(int(0 * scale_factor), int(750 * scale_factor))
 
         carrot = point_object(pos_x, pos_y)
-
-        carrot_list.append(carrot)
-
-        point_carrots_group.add(carrot)
+        # This line checks if the new carrots made is touching other carrots if so the carrot is removed and a new will be made
+        collided_sprites = pg.sprite.spritecollide(carrot, point_carrots_group, True)
+        if not collided_sprites:
+            carrot_list.append(carrot)
+            point_carrots_group.add(carrot)
 
         for sprite in carrot_list:
             point_carrots_group.add(sprite)
@@ -244,16 +245,20 @@ def create_large_stone(terran_large_stone, large_stone_list):
             pos_x = random.randint(int(101 * scale_factor), int(1750 * scale_factor))
             pos_y = random.randint(int(0 * scale_factor), int(750 * scale_factor))
         else:
-            pos_x = WIDTH + 100
+            # The width is *2 to avoid spawn on the screen when the width 
+            pos_x = WIDTH * 2 + 100
             pos_y = random.randint(int(0 * scale_factor), int(750 * scale_factor))
             
         initial_width, initial_height = int(70 * scale_factor), int(70 * scale_factor)
 
         stone = large_stone_one(pos_x, pos_y, initial_width, initial_height)
-        large_stone_list.append(stone)
-
-        terran_large_stone.add(stone)
         
+        # This line checks if the new stone made is touching other stones if so the stone is removed and a new will be made
+        collided_sprites = pg.sprite.spritecollide(stone, terran_large_stone, True)
+        if not collided_sprites:
+            large_stone_list.append(stone)
+            terran_large_stone.add(stone)
+    
         for sprite in large_stone_list:
             terran_large_stone.add(sprite)
         
@@ -575,6 +580,7 @@ def main():
 
     # Init function to save the animation images
     animation_list = extract_player_image(sprite_sheet)
+
     for x in range(len(animation_list_fall)):
         animation_list.append(animation_list_fall[x])
     still_player_image = pg.transform.rotate(animation_list[0][0], 315)

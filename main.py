@@ -4,7 +4,7 @@ from extract_player_image import extract_player_image, extract_player_image_fall
 from Scale_function import calculate_scale_factors
 from update_and_hit_func import (point_counter, sprite_movement,sprite_movement_terran,
     first_lvl_update, point_object_update, large_stone_hit_fence, carrot_hit_fence, ui_draw)
-from user_interface import create_buttons
+from user_interface import create_buttons, ui_click
 from sys import exit
 import time 
 
@@ -625,12 +625,11 @@ def main():
             if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
                 if user_interface == 1:
                     # Checks which ui element is clicked on
-                    collided_sprites = pg.sprite.spritecollide(
-                    event.pos,  
-                    ui_button_group,
-                    False
-                    )
-                    print(collided_sprites)
+                    for sprite in ui_button_group:
+                        if sprite.rect.collidepoint(event.pos):
+                            index = ui_button_group.sprites().index(sprite)
+                            if index % 2 == 0:
+                                ui_click(ui_button_group, sprite)
         # Draw if you lose
         if player_health <= 0: 
             frame_run = 0

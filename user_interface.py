@@ -121,6 +121,12 @@ def create_buttons(ui_button_group, WIN, scale_factor):
     
     return ui_button_group
 
+def ui_click(ui_button_group, sprite):
+    print("click")
+    index = ui_button_group.sprites().index(sprite)
+    if index % 2 == 0 and index < 8:
+        ui_button_group.sprites()[index+1].draw()
+
 def ui():
     secret_key = search_key()
     

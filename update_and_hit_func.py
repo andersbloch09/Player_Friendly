@@ -29,6 +29,12 @@ def sprite_movement(first_lvl_group):
     for sprite in first_lvl_group:
         sprite.update_speed()
 
+def ui_draw(ui_button_group):
+    for sprite in ui_button_group:
+        index = ui_button_group.sprites().index(sprite)
+        if index % 2 == 0:
+            sprite.draw()
+
 def large_stone_hit_fence(first_lvl_group, terran_large_stone):
     # This line of code checks for collision between the two groups and removes the one from terran_large_stone chosen by the True, False.
     pg.sprite.groupcollide(first_lvl_group, terran_large_stone, False, True)

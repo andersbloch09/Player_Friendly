@@ -2,8 +2,9 @@ import pygame as pg
 import random
 from extract_player_image import extract_player_image, extract_player_image_fall
 from Scale_function import calculate_scale_factors
-from update_and_hit_func import point_counter, sprite_movement, sprite_movement_terran, first_lvl_update, point_object_update, large_stone_hit_fence, carrot_hit_fence
-from user_interface import ui
+from update_and_hit_func import (point_counter, sprite_movement,sprite_movement_terran,
+    first_lvl_update, point_object_update, large_stone_hit_fence, carrot_hit_fence, ui_draw)
+from user_interface import create_buttons
 from sys import exit
 import time 
 
@@ -67,17 +68,7 @@ sprite_sheet_image_fall = pg.image.load("Assets/hit_fence_assets_done.png").conv
 hegn_til_anders = pg.image.load("Assets/HegnTilAnders.png").convert_alpha()
 large_carrot = pg.image.load("Assets/large_carrot.png").convert_alpha()
 
-##########################################################################################################
-# UI sprites
-add_button = pg.image.load("Assets/ui_assets/add_button.png").convert_alpha()
-add_button_clicked = pg.image.load("Assets/ui_assets/add_button_clicked.png").convert_alpha()
-arrow_button = pg.image.load("Assets/ui_assets/arrow.png").convert_alpha()
-arrow_button_clicked = pg.image.load("Assets/ui_assets/arrow_clicked.png").convert_alpha()
-remove_button = pg.image.load("Assets/ui_assets/remove.png").convert_alpha()
-remove_button_clicked = pg.image.load("Assets/ui_assets/remove_clicked.png").convert_alpha()
-start_button = pg.image.load("Assets/ui_assets/start_button.png").convert_alpha()
-start_button_clicked = pg.image.load("Assets/ui_assets/start_button_clicked.png").convert_alpha()
-table_sign = pg.image.load("Assets/ui_assets/table_sign.png").convert_alpha()
+
 
 
 # Events based on the game progress
@@ -314,7 +305,8 @@ def sprite_creation_first_lvl(first_lvl_group):
 
 # Draws the content on the window
 def draw_window(player, green_world_move, first_lvl_group, start_line, player_health, 
-                terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, point_carrots_group, point_count):
+                terran_large_stone, action_run, frame_run, new_x, new_y, animation_list,
+                  point_carrots_group, point_count, user_interface, ui_button_group):
     WIN.fill((BLACK))
     WIN.blit(GREEN_WORLD, (green_world_move.x, green_world_move.y))
     # The two if statements resolve in the moving background refresh
@@ -354,7 +346,10 @@ def draw_window(player, green_world_move, first_lvl_group, start_line, player_he
     WIN.blit(animation_list[action_run][frame_run], ((player.x - int(18 * scale_factor)) + new_x, (player.y - int(18 * scale_factor)) + new_y))
     #pg.draw.rect(WIN, BLACK, player)
     # This updates everything onto the screen
+    if user_interface == 1:
+        ui_draw(ui_button_group)
     pg.display.update()
+
 
 # gets center of the image for animation to match when running cross way
 def get_center_coords(image):
@@ -523,10 +518,10 @@ def stone_hit(terran_large_stone, player_sprite):
 
 
 def draw_lose(player, green_world_move, first_lvl_group, start_line, player_health,
-               terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, point_carrots_group, point_count):
+               terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, point_carrots_group, point_count, user_interface):
     frame_run = 0
     draw_window(player, green_world_move, first_lvl_group, start_line, player_health,
-                 terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, point_carrots_group, point_count)
+                 terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, point_carrots_group, point_count, user_interface)
     
     draw_text = LOSE_FONT.render("LOSER!", 1, RED)
     WIN.blit(draw_text, (WIDTH/2 - draw_text.get_width() /
@@ -552,6 +547,9 @@ def main():
     first_lvl_group = pg.sprite.Group()
     terran_large_stone = pg.sprite.Group()
     point_carrots_group = pg.sprite.Group()
+    # Creates the buttons for the ui  
+    ui_button_group = pg.sprite.Group()
+    ui_button_group = create_buttons(ui_button_group, WIN, scale_factor)
     green_world_move = pg.Rect(0 * scale_factor, 0 * scale_factor, WIDTH, HEIGHT)
     hit_count = 0
     player_health = 10000
@@ -624,11 +622,20 @@ def main():
             if event.type == STONE_HIT:
                 point_timer_0 += 25
 
+            if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+                if user_interface == 1:
+                    # Checks which ui element is clicked on
+                    collided_sprites = pg.sprite.spritecollide(
+                    event.pos,  
+                    ui_button_group,
+                    False
+                    )
+                    print(collided_sprites)
         # Draw if you lose
         if player_health <= 0: 
             frame_run = 0
             draw_lose(player, green_world_move, first_lvl_group, start_line, player_health,
-                    terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, point_carrots_group, point_count)
+                    terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, point_carrots_group, point_count, user_interface)
             break
         if player.x <= -15:
             player_health = 0
@@ -652,7 +659,7 @@ def main():
         stone_hit(terran_large_stone, player_sprite) 
         player_hit(first_lvl_group, player)
 
-        if user_interface == 1: 
+        if user_interface == 0: 
             if fall == 0: 
                 action_run, frame_run, new_x, new_y, last_update_player = player_movement(keys_pressed, player, still_player_image, last_update_player,
                                                         animation_cooldown, frame_run, action_run, new_x, new_y, screen_starter)
@@ -663,10 +670,9 @@ def main():
         screen_vel, player_vel = screen_movement(player, green_world_move, point_count, screen_vel, player_vel, speed_timer_0)
 
         draw_window(player, green_world_move, first_lvl_group, start_line, player_health,
-                    terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, point_carrots_group, point_count)
+                    terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, 
+                    point_carrots_group, point_count, user_interface, ui_button_group)
         
-        if user_interface == 0:
-            ui()
         # Checks for button reset of game
         # Peter sige det skal være space
         if keys_pressed[pg.K_SPACE]:

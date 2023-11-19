@@ -1,19 +1,7 @@
 import pygame as pg
 from cryptography.fernet import Fernet
 import base64
-
-point_count = 1010231651
-
-# Class for ui buttons
-class buttons(pg.sprite.Sprite):
-    def __init__(self, pos_x, pos_y, initial_width, initial_height, image):
-        pg.sprite.Sprite.__init__(self)
-        self.image = image
-        self.image = pg.transform.scale(self.image, (initial_width, initial_height))
-        self.rect = self.image.get_rect()
-        self.rect.topleft = [pos_x, pos_y]
-        
-
+       
 class User:
     def __init__(self, username):
         self.user_name = username
@@ -81,11 +69,59 @@ def read_data():
 
     print(decrypted_data)
 
-def draw_ui():
-    pass
+# Class for ui buttons
+class buttons(pg.sprite.Sprite):
+    def __init__(self, pos_x, pos_y, initial_width, initial_height, image, window, scale_factor):
+        pg.sprite.Sprite.__init__(self)
+        self.image = image
+        self.image = pg.transform.smoothscale(self.image, (initial_width*scale_factor, initial_height*scale_factor))
+        self.rect = self.image.get_rect()
+        self.rect.topleft = [pos_x*scale_factor, pos_y*scale_factor]
+        self.window = window
 
-def ui(point_count):
+    def check_for_click(self, mouse_pos):
+        print(mouse_pos)
 
+    def draw(self): 
+        self.window.blit(self.image, (self.rect.topleft[0], self.rect.topleft[1]))
+
+# This function will create all the objects for the ui 
+def create_buttons(ui_button_group, WIN, scale_factor): 
+    ##########################################################################################################
+    # UI sprites
+    add_button = pg.image.load("Assets/ui_assets/add_button.png").convert_alpha()
+    add_button_clicked = pg.image.load("Assets/ui_assets/add_button_clicked.png").convert_alpha()
+    arrow_button = pg.image.load("Assets/ui_assets/arrow.png").convert_alpha()
+    arrow_button_clicked = pg.image.load("Assets/ui_assets/arrow_clicked.png").convert_alpha()
+    remove_button = pg.image.load("Assets/ui_assets/remove.png").convert_alpha()
+    remove_button_clicked = pg.image.load("Assets/ui_assets/remove_clicked.png").convert_alpha()
+    start_button = pg.image.load("Assets/ui_assets/start_button.png").convert_alpha()
+    start_button_clicked = pg.image.load("Assets/ui_assets/start_button_clicked.png").convert_alpha()
+    table_sign = pg.image.load("Assets/ui_assets/table_sign.png").convert_alpha()
+    add_button_ob = buttons(500, 800-214, 310, 214, add_button, WIN, scale_factor)
+    add_button_clicked_ob = buttons(500, 800-214, 310, 214, add_button_clicked, WIN, scale_factor)
+    arrow_button_ob = buttons(1025, 137, 120, 105, arrow_button, WIN, scale_factor)
+    arrow_button_clicked_ob = buttons(1025, 137, 120, 105, arrow_button_clicked, WIN, scale_factor)
+    remove_button_ob = buttons(1221, 10, 300, 142, remove_button, WIN, scale_factor)
+    remove_button_clicked_ob = buttons(1221, 10, 300, 142, remove_button_clicked, WIN, scale_factor)
+    start_button_ob = buttons(100, 800-228, 325, 231, start_button, WIN, scale_factor)
+    start_button_clicked_ob = buttons(100, 800-228, 325, 231, start_button_clicked, WIN, scale_factor)
+    table_sign_ob = buttons(1100, 800-688, 548, 688, table_sign, WIN, scale_factor)
+    ui_button_group.add(
+        add_button_ob,
+        add_button_clicked_ob,
+        arrow_button_ob,
+        arrow_button_clicked_ob,
+        remove_button_ob,
+        remove_button_clicked_ob,
+        start_button_ob,
+        start_button_clicked_ob,
+        table_sign_ob
+    )
+    
+    return ui_button_group
+
+def ui():
     secret_key = search_key()
     
     if not secret_key: 
@@ -94,7 +130,7 @@ def ui(point_count):
     
     cipher_suite = Fernet(secret_key)
     
-    encrypted_score = encrypt_data(point_count, cipher_suite)
+    # encrypted_score = encrypt_data(point_count, cipher_suite)
     
     encoded_key = encode_key(secret_key)
     
@@ -102,9 +138,5 @@ def ui(point_count):
     #print("encrypt", encrypted_score)
     #print("decrypt", decrypted_score)
 
-    save_data(encoded_key, encrypted_score)
+    # save_data(encoded_key, encrypted_score)
     read_data()
-
-
-
-ui(point_count)

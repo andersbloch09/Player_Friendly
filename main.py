@@ -4,7 +4,7 @@ from extract_player_image import extract_player_image, extract_player_image_fall
 from Scale_function import calculate_scale_factors
 from update_and_hit_func import (point_counter, sprite_movement,sprite_movement_terran,
     first_lvl_update, point_object_update, large_stone_hit_fence, carrot_hit_fence, ui_draw)
-from user_interface import create_buttons, ui_click
+from user_interface import create_buttons
 from sys import exit
 import time 
 
@@ -32,7 +32,8 @@ screen_vel = int(2 * scale_factor)
 sprite_vel = screen_vel
 
 # Variable to control screenscroll start
-screen_starter = 0
+screen_starter = False
+user_interface = True
 
 # Player hit variable
 hit_occured = False
@@ -113,7 +114,7 @@ class large_stone_one(pg.sprite.Sprite):
     def update_speed(self):
         global screen_starter
         global large_stone_list
-        if screen_starter >= 1 or player.x > 100 * scale_factor:
+        if screen_starter == True or player.x > 100 * scale_factor:
             self.rect.x -= screen_vel
             if self.rect.x <= -self.initial_width * scale_factor:
                 self.kill()
@@ -140,7 +141,7 @@ class avoid_object(pg.sprite.Sprite):
     def update_speed(self):
         global screen_starter
         global avoid_object_list
-        if screen_starter >= 1 or player.x > 100 * scale_factor:
+        if screen_starter == True or player.x > 100 * scale_factor:
             self.rect.x -= screen_vel
             if self.rect.x <= -10 * scale_factor:
                 self.kill()
@@ -183,7 +184,7 @@ class point_object(pg.sprite.Sprite):
     def update_speed(self):
         global screen_starter
         global carrot_list
-        if screen_starter >= 1 or player.x > 100 * scale_factor:
+        if screen_starter == True or player.x > 100 * scale_factor:
             self.rect.x -= screen_vel
             if self.rect.x <= int(-(57 * 0.7) * scale_factor) * scale_factor:
                 self.kill()
@@ -208,7 +209,7 @@ class PlayerSprite(pg.sprite.Sprite):
 def sprite_creation_points(point_carrots_group, carrot_list):
     global screen_starter
     if len(carrot_list) < 6: 
-        if screen_starter == 0:
+        if screen_starter == False:
                 pos_x = random.randint(int(101 * scale_factor), int(1750 * scale_factor))
                 pos_y = random.randint(int(0 * scale_factor), int(750 * scale_factor))
         else:
@@ -232,7 +233,7 @@ def create_large_stone(terran_large_stone, large_stone_list):
     global screen_starter
 
     if len(large_stone_list) < 3:
-        if screen_starter == 0:
+        if screen_starter == False:
             pos_x = random.randint(int(101 * scale_factor), int(1750 * scale_factor))
             pos_y = random.randint(int(0 * scale_factor), int(750 * scale_factor))
         else:
@@ -258,7 +259,7 @@ def create_large_stone(terran_large_stone, large_stone_list):
 # Call this function to create and manage large stones
 def sprite_creation_terran(terran_large_stone, large_stone_list):
     global screen_starter
-    if screen_starter > 0 and len(large_stone_list) < 2:
+    if screen_starter == True and len(large_stone_list) < 2:
         random_num = random.randint(int(0 * scale_factor), int(200 * scale_factor))
         if random_num == 20:
             return create_large_stone(terran_large_stone, large_stone_list)
@@ -346,7 +347,7 @@ def draw_window(player, green_world_move, first_lvl_group, start_line, player_he
     WIN.blit(animation_list[action_run][frame_run], ((player.x - int(18 * scale_factor)) + new_x, (player.y - int(18 * scale_factor)) + new_y))
     #pg.draw.rect(WIN, BLACK, player)
     # This updates everything onto the screen
-    if user_interface == 1:
+    if user_interface == True:
         ui_draw(ui_button_group)
     pg.display.update()
 
@@ -373,7 +374,7 @@ def player_movement(keys_pressed, player, still_player_image, last_update_player
     new_x = 0
     if not any(keys_pressed):
         action_run = 8
-    if player.x <= 0 and screen_starter >= 1:
+    if player.x <= 0 and screen_starter == True:
         action_run = 0
     # This controls straight walks
     if keys_pressed[pg.K_a] and player.x > 0:
@@ -449,9 +450,9 @@ def fall_animation(animation_cooldown_fall, last_update_player, frame_run, fall_
 # This function decides when the screen will move and how fast 
 def screen_movement(player, green_world_move, point_count, screen_vel, player_vel, speed_timer_0):
     global screen_starter
-    if screen_starter >= 1 or player.x > 100 * scale_factor: 
+    if screen_starter == True or player.x > 100 * scale_factor: 
         green_world_move.x -= screen_vel
-        screen_starter += 1
+        screen_starter = True
         if player.x > 0 * scale_factor:
             player.x += -screen_vel
     
@@ -518,10 +519,12 @@ def stone_hit(terran_large_stone, player_sprite):
 
 
 def draw_lose(player, green_world_move, first_lvl_group, start_line, player_health,
-               terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, point_carrots_group, point_count, user_interface):
+                    terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, 
+                    point_carrots_group, point_count, user_interface, ui_button_group):
     frame_run = 0
     draw_window(player, green_world_move, first_lvl_group, start_line, player_health,
-                 terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, point_carrots_group, point_count, user_interface)
+                    terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, 
+                    point_carrots_group, point_count, user_interface, ui_button_group)
     
     draw_text = LOSE_FONT.render("LOSER!", 1, RED)
     WIN.blit(draw_text, (WIDTH/2 - draw_text.get_width() /
@@ -536,12 +539,13 @@ def main():
     global large_stone_list
     global screen_vel
     global player_vel
+    global user_interface
     # List clearing to avoid large ram issues
     avoid_object_list.clear()
     large_stone_list.clear()
     carrot_list.clear()
     # init of the starter variables
-    screen_starter = 0
+    screen_starter = False
     player = pg.Rect(0 * scale_factor, HEIGHT//2, player_WIDTH*3, player_HEIGHT*3)
     start_line = pg.Rect(100 * scale_factor, 0 * scale_factor, 10 * scale_factor, 800 * scale_factor)
     first_lvl_group = pg.sprite.Group()
@@ -582,8 +586,6 @@ def main():
     for x in range(len(animation_list_fall)):
         animation_list.append(animation_list_fall[x])
     still_player_image = pg.transform.rotate(animation_list[0][0], 315)
-    # User interface variables
-    user_interface = 1
 
     # Sprite for player rect to check for colissions with the pygame functions 
     player_sprite = PlayerSprite(player)
@@ -593,6 +595,7 @@ def main():
     point_timer_0 = time.time()
 
     clock = pg.time.Clock()
+
     run = True
 
     while run:
@@ -628,19 +631,23 @@ def main():
                     for sprite in ui_button_group:
                         if sprite.rect.collidepoint(event.pos):
                             index = ui_button_group.sprites().index(sprite)
-                            if index % 2 == 0:
-                                ui_click(ui_button_group, sprite)
+                            sprite.button_filter(index)
+                            user_interface = sprite.draw_click(event.pos)
+                            #################### work here ################ these functions 
+
+
         # Draw if you lose
         if player_health <= 0: 
             frame_run = 0
             draw_lose(player, green_world_move, first_lvl_group, start_line, player_health,
-                    terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, point_carrots_group, point_count, user_interface)
+                    terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, 
+                    point_carrots_group, point_count, user_interface, ui_button_group)
             break
         if player.x <= -15:
             player_health = 0
 
         # These lines are for the sprites creation and updates 
-        if screen_starter >= 1 or player.x > int(100 * scale_factor):
+        if screen_starter == True or player.x > int(100 * scale_factor):
             first_lvl_group = sprite_creation_first_lvl(first_lvl_group)
             sprite_movement(first_lvl_group)
             start_line.x -= screen_vel
@@ -658,7 +665,7 @@ def main():
         stone_hit(terran_large_stone, player_sprite) 
         player_hit(first_lvl_group, player)
 
-        if user_interface == 0: 
+        if user_interface == False: 
             if fall == 0: 
                 action_run, frame_run, new_x, new_y, last_update_player = player_movement(keys_pressed, player, still_player_image, last_update_player,
                                                         animation_cooldown, frame_run, action_run, new_x, new_y, screen_starter)
@@ -666,7 +673,7 @@ def main():
             if fall == 1:
                 action_run, frame_run, fall_front, fall_back, fall, last_update_player = fall_animation(animation_cooldown_fall, last_update_player, frame_run, fall_front, fall_back, fall, action_run)
 
-        screen_vel, player_vel = screen_movement(player, green_world_move, point_count, screen_vel, player_vel, speed_timer_0)
+            screen_vel, player_vel = screen_movement(player, green_world_move, point_count, screen_vel, player_vel, speed_timer_0)
 
         draw_window(player, green_world_move, first_lvl_group, start_line, player_health,
                     terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, 
@@ -676,6 +683,9 @@ def main():
         # Peter sige det skal være space
         if keys_pressed[pg.K_SPACE]:
             main()
+        if keys_pressed[pg.K_ESCAPE]:
+            user_interface = True
+
     main()
 
 if __name__ == "__main__":

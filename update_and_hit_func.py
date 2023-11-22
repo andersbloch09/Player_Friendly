@@ -31,9 +31,8 @@ def sprite_movement(first_lvl_group):
 
 def ui_draw(ui_button_group):
     for sprite in ui_button_group:
-        index = ui_button_group.sprites().index(sprite)
-        if index % 2 == 0:
-            sprite.draw()
+        sprite.draw_click()
+        sprite.draw()
 
 def large_stone_hit_fence(first_lvl_group, terran_large_stone):
     # This line of code checks for collision between the two groups and removes the one from terran_large_stone chosen by the True, False.

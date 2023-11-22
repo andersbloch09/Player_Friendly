@@ -1,6 +1,7 @@
 import pygame as pg
 from cryptography.fernet import Fernet
 import base64
+import time 
        
 class User:
     def __init__(self, username):
@@ -71,16 +72,39 @@ def read_data():
 
 # Class for ui buttons
 class buttons(pg.sprite.Sprite):
-    def __init__(self, pos_x, pos_y, initial_width, initial_height, image, window, scale_factor):
+    def __init__(self, pos_x, pos_y, initial_width, initial_height, image, window, scale_factor, image_clicked = 0):
         pg.sprite.Sprite.__init__(self)
         self.image = image
+        self.none_clicked = image
+        self.image_clicked = image_clicked
+        self.start_time = time.time()
+        self.start_b = False
         self.image = pg.transform.smoothscale(self.image, (initial_width*scale_factor, initial_height*scale_factor))
         self.rect = self.image.get_rect()
         self.rect.topleft = [pos_x*scale_factor, pos_y*scale_factor]
         self.window = window
 
-    def check_for_click(self, mouse_pos):
-        print(mouse_pos)
+    def draw_click(self, mouse_pos=None):
+        if self.image_clicked != 0:
+            self.check_time = time.time()
+            if mouse_pos:
+                self.image = self.image_clicked
+                if self.start_b == True:
+                    time.sleep(0.25)
+                self.start_time = time.time()
+                if self.start_time - self.check_time > 0.25: 
+                    self.image = self.none_clicked
+                    if self.start_b == True: 
+                        return False
+                    else: 
+                        return True
+
+    def button_filter(self, button_index):
+        self.start_b = False
+        print(button_index)
+        if button_index == 0: 
+            self.start_b = True
+       
 
     def draw(self): 
         self.window.blit(self.image, (self.rect.topleft[0], self.rect.topleft[1]))
@@ -98,34 +122,20 @@ def create_buttons(ui_button_group, WIN, scale_factor):
     start_button = pg.image.load("Assets/ui_assets/start_button.png").convert_alpha()
     start_button_clicked = pg.image.load("Assets/ui_assets/start_button_clicked.png").convert_alpha()
     table_sign = pg.image.load("Assets/ui_assets/table_sign.png").convert_alpha()
-    add_button_ob = buttons(500, 800-214, 310, 214, add_button, WIN, scale_factor)
-    add_button_clicked_ob = buttons(500, 800-214, 310, 214, add_button_clicked, WIN, scale_factor)
-    arrow_button_ob = buttons(1025, 137, 120, 105, arrow_button, WIN, scale_factor)
-    arrow_button_clicked_ob = buttons(1025, 137, 120, 105, arrow_button_clicked, WIN, scale_factor)
-    remove_button_ob = buttons(1221, 10, 300, 142, remove_button, WIN, scale_factor)
-    remove_button_clicked_ob = buttons(1221, 10, 300, 142, remove_button_clicked, WIN, scale_factor)
-    start_button_ob = buttons(100, 800-228, 325, 231, start_button, WIN, scale_factor)
-    start_button_clicked_ob = buttons(100, 800-228, 325, 231, start_button_clicked, WIN, scale_factor)
+    add_button_ob = buttons(500, 800-214, 310, 214, add_button, WIN, scale_factor, add_button_clicked)
+    arrow_button_ob = buttons(1025, 137, 120, 105, arrow_button, WIN, scale_factor, arrow_button_clicked)
+    remove_button_ob = buttons(1221, 10, 300, 142, remove_button, WIN, scale_factor, remove_button_clicked)
+    start_button_ob = buttons(100, 800-228, 325, 231, start_button, WIN, scale_factor, start_button_clicked)
     table_sign_ob = buttons(1100, 800-688, 548, 688, table_sign, WIN, scale_factor)
     ui_button_group.add(
-        add_button_ob,
-        add_button_clicked_ob,
-        arrow_button_ob,
-        arrow_button_clicked_ob,
-        remove_button_ob,
-        remove_button_clicked_ob,
         start_button_ob,
-        start_button_clicked_ob,
+        add_button_ob,
+        arrow_button_ob,
+        remove_button_ob,
         table_sign_ob
     )
     
     return ui_button_group
-
-def ui_click(ui_button_group, sprite):
-    print("click")
-    index = ui_button_group.sprites().index(sprite)
-    if index % 2 == 0 and index < 8:
-        ui_button_group.sprites()[index+1].draw()
 
 def ui():
     secret_key = search_key()

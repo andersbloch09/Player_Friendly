@@ -1,9 +1,9 @@
 import pygame as pg
 import random
-from extract_player_image import extract_player_image, extract_player_image_fall
+from extract_player_image import extract_player_image, extract_player_image_fall, get_center_coords
 from Scale_function import calculate_scale_factors
 from update_and_hit_func import (point_counter, sprite_movement,sprite_movement_terran,
-    first_lvl_update, point_object_update, large_stone_hit_fence, carrot_hit_fence, ui_draw)
+                                  point_object_update, large_stone_hit_fence, carrot_hit_fence, ui_draw, draw_pause)
 from user_interface import create_buttons
 from sys import exit
 import time 
@@ -34,6 +34,7 @@ sprite_vel = screen_vel
 # Variable to control screenscroll start
 screen_starter = False
 user_interface = True
+paused = False
 
 # Player hit variable
 hit_occured = False
@@ -82,6 +83,7 @@ STONE_HIT = pg.USEREVENT + 4
 HEALTH_FONT = pg.font.SysFont('comicsans', int(40 * scale_factor))
 POINT_FONT = pg.font.SysFont('comicsans', int(40 * scale_factor))
 LOSE_FONT = pg.font.SysFont('comicsans', int(100 * scale_factor))
+PAUSED_FONT = pg.font.SysFont('comicsans', int(100 * scale_factor))
 
 #####################################################################################
 
@@ -123,7 +125,7 @@ class large_stone_one(pg.sprite.Sprite):
                 else: 
                     pass
     
-    def draw(self): 
+    def update(self): 
         #WIN.blit(self.surface,(self.rect.x, self.rect.y))
         WIN.blit(self.image, (self.rect.topleft[0], self.rect.topleft[1]))
      
@@ -151,7 +153,7 @@ class avoid_object(pg.sprite.Sprite):
                     pass
 
 # Adds the images of the fences to the sprites so it fits
-    def add_image(self):
+    def update(self):
         image_size = self.image.get_size()
         hegn_til_anders = pg.transform.scale(self.hegn_til_anders, (int(20 * 1.5 * scale_factor), int(92 * 1.5 * scale_factor)))
         nrimages = image_size[1] // int(92 * scale_factor)
@@ -193,7 +195,7 @@ class point_object(pg.sprite.Sprite):
                 else: 
                     pass
 
-    def draw_carrot(self):
+    def update(self):
         # carrot is 57x52 in size before scaling
         large_carrot_scaled = pg.transform.smoothscale(self.carrot, (int((57 * 0.7) * scale_factor), int((52 * 0.7) * scale_factor)))
         WIN.blit(large_carrot_scaled, (self.rect.topleft[0], self.rect.topleft[1]))
@@ -308,6 +310,7 @@ def sprite_creation_first_lvl(first_lvl_group):
 def draw_window(player, green_world_move, first_lvl_group, start_line, player_health, 
                 terran_large_stone, action_run, frame_run, new_x, new_y, animation_list,
                   point_carrots_group, point_count, user_interface, ui_button_group):
+    global paused
     WIN.fill((BLACK))
     WIN.blit(GREEN_WORLD, (green_world_move.x, green_world_move.y))
     # The two if statements resolve in the moving background refresh
@@ -318,16 +321,20 @@ def draw_window(player, green_world_move, first_lvl_group, start_line, player_he
     # This draws the start line 
     if start_line.x > -10 * scale_factor:
         pg.draw.rect(WIN, RED, start_line)
-   
+    
 ###################################################################################################
-    # This function here draws the fences
-    first_lvl_update(first_lvl_group)
-    #first_lvl_group.draw(WIN)
-    # Draws the stones
-    sprite_movement_terran(terran_large_stone)
-    # Updates and draws carrots
-    #point_carrots_group.draw(WIN)
-    point_object_update(point_carrots_group)
+    first_lvl_group.update()
+    terran_large_stone.update()
+    point_carrots_group.update()
+    
+    if not paused:
+        # This function here draws the fences
+        sprite_movement(first_lvl_group)
+        # Draws the stones
+        sprite_movement_terran(terran_large_stone)
+        # Updates and draws carrots
+        #point_carrots_group.draw(WIN)
+        point_object_update(point_carrots_group)
 ###################################################################################################
 
     # Displays health 
@@ -349,18 +356,14 @@ def draw_window(player, green_world_move, first_lvl_group, start_line, player_he
     # This updates everything onto the screen
     if user_interface == True:
         ui_draw(ui_button_group)
+
+    # Draws the pause sign
+    if paused: 
+        draw_pause(WIN, WHITE, WIDTH, HEIGHT, PAUSED_FONT)
+        
     pg.display.update()
 
 
-# gets center of the image for animation to match when running cross way
-def get_center_coords(image):
-	rect_rotated = image.get_rect()
-		
-	center = rect_rotated.center
-
-	new_x = 0 - center[0] + int(37 * scale_factor)
-	new_y = 0 - center[1] + int(37 * scale_factor)
-	return new_x, new_y
 
 # This function creates the movement for the player
 def player_movement(keys_pressed, player, still_player_image, last_update_player, animation_cooldown, frame_run, action_run, new_x, new_y, screen_starter):
@@ -401,16 +404,16 @@ def player_movement(keys_pressed, player, still_player_image, last_update_player
     # This controls the side walk 
     if keys_pressed[pg.K_d] and keys_pressed[pg.K_w] and player.x < WIDTH - player_WIDTH*3:
         action_run = 4
-        new_x, new_y = get_center_coords(still_player_image)
+        new_x, new_y = get_center_coords(still_player_image, scale_factor)
     if keys_pressed[pg.K_w] and keys_pressed[pg.K_a] and player.x > 0:
         action_run = 5
-        new_x, new_y = get_center_coords(still_player_image)
+        new_x, new_y = get_center_coords(still_player_image, scale_factor)
     if keys_pressed[pg.K_a] and keys_pressed[pg.K_s] and player.x > 0:
         action_run = 6
-        new_x, new_y = get_center_coords(still_player_image)
+        new_x, new_y = get_center_coords(still_player_image, scale_factor)
     if keys_pressed[pg.K_s] and keys_pressed[pg.K_d] and player.x < WIDTH - player_WIDTH*3:
         action_run = 7
-        new_x, new_y = get_center_coords(still_player_image)
+        new_x, new_y = get_center_coords(still_player_image, scale_factor)
     
     if player.y < -player_HEIGHT*3: 
         player.y = HEIGHT
@@ -540,6 +543,7 @@ def main():
     global screen_vel
     global player_vel
     global user_interface
+    global paused
     # List clearing to avoid large ram issues
     avoid_object_list.clear()
     large_stone_list.clear()
@@ -558,6 +562,7 @@ def main():
     hit_count = 0
     player_health = 10000
     point_count = 0
+    point_count_paused = 0
     screen_vel = int(2 * scale_factor)
     player_vel = int(8 * scale_factor)
 
@@ -590,9 +595,10 @@ def main():
     # Sprite for player rect to check for colissions with the pygame functions 
     player_sprite = PlayerSprite(player)
 
-    # Timers to control speed and points
+    # Timers to control speed, points and paused 
     speed_timer_0 = time.time()
     point_timer_0 = time.time()
+    start_time_paused = time.time()
 
     clock = pg.time.Clock()
 
@@ -649,9 +655,8 @@ def main():
         # These lines are for the sprites creation and updates 
         if screen_starter == True or player.x > int(100 * scale_factor):
             first_lvl_group = sprite_creation_first_lvl(first_lvl_group)
-            sprite_movement(first_lvl_group)
             start_line.x -= screen_vel
-            point_count = point_counter(point_timer_0)
+            point_count, point_count_paused = point_counter(point_timer_0, point_count, paused, point_count_paused)
         # This line makes the point timer restart until the game actually starts 
         else:
             point_timer_0 = time.time()
@@ -662,18 +667,18 @@ def main():
         carrot_hit_fence(first_lvl_group, point_carrots_group)
         keys_pressed = pg.key.get_pressed()
         carrot_pick(point_carrots_group, player_sprite)
-        stone_hit(terran_large_stone, player_sprite) 
+        stone_hit(terran_large_stone, player_sprite)
         player_hit(first_lvl_group, player)
+        if user_interface == False:
+            if not paused:
+                if fall == 0: 
+                    action_run, frame_run, new_x, new_y, last_update_player = player_movement(keys_pressed, player, still_player_image, last_update_player,
+                                                            animation_cooldown, frame_run, action_run, new_x, new_y, screen_starter)
 
-        if user_interface == False: 
-            if fall == 0: 
-                action_run, frame_run, new_x, new_y, last_update_player = player_movement(keys_pressed, player, still_player_image, last_update_player,
-                                                        animation_cooldown, frame_run, action_run, new_x, new_y, screen_starter)
+                if fall == 1:
+                    action_run, frame_run, fall_front, fall_back, fall, last_update_player = fall_animation(animation_cooldown_fall, last_update_player, frame_run, fall_front, fall_back, fall, action_run)
 
-            if fall == 1:
-                action_run, frame_run, fall_front, fall_back, fall, last_update_player = fall_animation(animation_cooldown_fall, last_update_player, frame_run, fall_front, fall_back, fall, action_run)
-
-            screen_vel, player_vel = screen_movement(player, green_world_move, point_count, screen_vel, player_vel, speed_timer_0)
+                screen_vel, player_vel = screen_movement(player, green_world_move, point_count, screen_vel, player_vel, speed_timer_0)
 
         draw_window(player, green_world_move, first_lvl_group, start_line, player_health,
                     terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, 
@@ -685,7 +690,20 @@ def main():
             main()
         if keys_pressed[pg.K_ESCAPE]:
             user_interface = True
-
+        if keys_pressed[pg.K_p]:
+            # Makes sure the user interface is not running
+            if not user_interface: 
+                # This creates a timer så the pause does not undo itself after just being clicked
+                check_time_paused = time.time()
+                if paused == False and check_time_paused - start_time_paused > 0.20:
+                    paused = True
+                    start_time_paused = time.time()
+                if paused == True and check_time_paused - start_time_paused > 0.25:
+                    paused = False
+                    # Creates a new starting point for the point counter 
+                    point_timer_0 = time.time()
+                    # New timer start to make sure it does not reset instatly
+                    start_time_paused = time.time()
     main()
 
 if __name__ == "__main__":

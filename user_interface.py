@@ -90,6 +90,8 @@ class buttons(pg.sprite.Sprite):
             if mouse_pos:
                 self.image = self.image_clicked
                 if self.start_b == True:
+                    self.draw()
+                    pg.display.update()
                     time.sleep(0.25)
                 self.start_time = time.time()
                 if self.start_time - self.check_time > 0.25: 
@@ -101,7 +103,7 @@ class buttons(pg.sprite.Sprite):
 
     def button_filter(self, button_index):
         self.start_b = False
-        print(button_index)
+        print("Button index:", button_index)
         if button_index == 0: 
             self.start_b = True
        

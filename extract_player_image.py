@@ -81,3 +81,14 @@ def extract_player_image(sprite_sheet):
     animation_list.append(temp_img_list)
 
     return animation_list
+
+
+# gets center of the image for animation to match when running cross way
+def get_center_coords(image, scale_factor):
+	rect_rotated = image.get_rect()
+		
+	center = rect_rotated.center
+
+	new_x = 0 - center[0] + int(37 * scale_factor)
+	new_y = 0 - center[1] + int(37 * scale_factor)
+	return new_x, new_y

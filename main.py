@@ -63,7 +63,7 @@ player_HEIGHT = 40/3 * scale_factor
 
 # player = pg.Rect(0, 0, player_WIDTH, player_HEIGHT)
 
-GREEN_WORLD = pg.transform.scale(pg.image.load('Assets/GreenWorld2.PNG').convert(), (WIDTH, HEIGHT)) 
+GREEN_WORLD = pg.transform.scale(pg.image.load('Assets/GreenWorld3.PNG').convert(), (WIDTH, HEIGHT)) 
 large_stone_image = pg.image.load("Assets/large_stone_3.PNG").convert_alpha()
 sprite_sheet_image = pg.image.load("Assets/walking_assets_player_friendly_1.png").convert_alpha()
 sprite_sheet_image_fall = pg.image.load("Assets/hit_fence_assets_done.png").convert_alpha()
@@ -529,7 +529,7 @@ def draw_lose(player, green_world_move, first_lvl_group, start_line, player_heal
                     terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, 
                     point_carrots_group, point_count, user_interface, ui_button_group)
     
-    draw_text = LOSE_FONT.render("LOSER!", 1, RED)
+    draw_text = LOSE_FONT.render("LOSER!", 1, BLACK)
     WIN.blit(draw_text, (WIDTH/2 - draw_text.get_width() /
                          2, HEIGHT/2 - draw_text.get_height()/2))
     pg.display.update()
@@ -638,9 +638,8 @@ def main():
                         if sprite.rect.collidepoint(event.pos):
                             index = ui_button_group.sprites().index(sprite)
                             sprite.button_filter(index)
-                            user_interface = sprite.draw_click(event.pos)
+                            user_interface = sprite.draw_click(event.pos, index)
                             #################### work here ################ these functions 
-
 
         # Draw if you lose
         if player_health <= 0: 
@@ -690,6 +689,7 @@ def main():
             main()
         if keys_pressed[pg.K_ESCAPE]:
             user_interface = True
+            main()
         if keys_pressed[pg.K_p]:
             # Makes sure the user interface is not running
             if not user_interface: 

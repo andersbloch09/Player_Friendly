@@ -74,42 +74,44 @@ def read_data():
 class buttons(pg.sprite.Sprite):
     def __init__(self, pos_x, pos_y, initial_width, initial_height, image, window, scale_factor, image_clicked = 0):
         pg.sprite.Sprite.__init__(self)
-        self.image = image
-        self.none_clicked = image
         self.image_clicked = image_clicked
         self.start_time = time.time()
         self.start_b = False
-        self.image = pg.transform.smoothscale(self.image, (initial_width*scale_factor, initial_height*scale_factor))
+        if self.image_clicked != 0: 
+            self.image_clicked = pg.transform.smoothscale(self.image_clicked, (initial_width*scale_factor, initial_height*scale_factor))
+        self.image = pg.transform.smoothscale(image, (initial_width*scale_factor, initial_height*scale_factor))
         self.rect = self.image.get_rect()
+        self.none_clicked = self.image
         self.rect.topleft = [pos_x*scale_factor, pos_y*scale_factor]
         self.window = window
 
-    def draw_click(self, mouse_pos=None):
-        if self.image_clicked != 0:
+    def draw_click(self, mouse_pos=None, index=None):
+        print(index)
+        if index != 4:
             self.check_time = time.time()
             if mouse_pos:
                 self.image = self.image_clicked
-                if self.start_b == True:
-                    self.draw()
-                    pg.display.update()
-                    time.sleep(0.25)
+                self.draw()
+                pg.display.update()
+                time.sleep(0.20)
                 self.start_time = time.time()
-                if self.start_time - self.check_time > 0.25: 
+                if self.start_time - self.check_time > 0.15: 
                     self.image = self.none_clicked
                     if self.start_b == True: 
                         return False
                     else: 
                         return True
+        else: 
+            return True
 
     def button_filter(self, button_index):
         self.start_b = False
         print("Button index:", button_index)
         if button_index == 0: 
             self.start_b = True
-       
-
-    def draw(self): 
-        self.window.blit(self.image, (self.rect.topleft[0], self.rect.topleft[1]))
+    
+    def draw(self):
+        self.window.blit(self.image, (int(self.rect.topleft[0]), int(self.rect.topleft[1])))
 
 # This function will create all the objects for the ui 
 def create_buttons(ui_button_group, WIN, scale_factor): 
@@ -124,8 +126,8 @@ def create_buttons(ui_button_group, WIN, scale_factor):
     start_button = pg.image.load("Assets/ui_assets/start_button.png").convert_alpha()
     start_button_clicked = pg.image.load("Assets/ui_assets/start_button_clicked.png").convert_alpha()
     table_sign = pg.image.load("Assets/ui_assets/table_sign.png").convert_alpha()
-    add_button_ob = buttons(500, 800-214, 310, 214, add_button, WIN, scale_factor, add_button_clicked)
-    arrow_button_ob = buttons(1025, 137, 120, 105, arrow_button, WIN, scale_factor, arrow_button_clicked)
+    add_button_ob = buttons(500, 800-214, 305, 209, add_button, WIN, scale_factor, add_button_clicked)
+    arrow_button_ob = buttons(1010, 123, 163, 134, arrow_button, WIN, scale_factor, arrow_button_clicked)
     remove_button_ob = buttons(1221, 10, 300, 142, remove_button, WIN, scale_factor, remove_button_clicked)
     start_button_ob = buttons(100, 800-228, 325, 231, start_button, WIN, scale_factor, start_button_clicked)
     table_sign_ob = buttons(1100, 800-688, 548, 688, table_sign, WIN, scale_factor)

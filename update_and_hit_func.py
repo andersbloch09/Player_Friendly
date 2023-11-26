@@ -30,7 +30,6 @@ def sprite_movement(first_lvl_group):
 
 def ui_draw(ui_button_group):
     for sprite in ui_button_group:
-        sprite.draw_click()
         sprite.draw()
 
 def draw_pause(WIN, WHITE, WIDTH, HEIGHT, PAUSED_FONT):

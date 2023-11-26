@@ -87,7 +87,7 @@ class buttons(pg.sprite.Sprite):
 
     def draw_click(self, mouse_pos=None, index=None):
         print(index)
-        if index != 4:
+        if index != 4 and index != 2:
             self.check_time = time.time()
             if mouse_pos:
                 self.image = self.image_clicked
@@ -127,7 +127,7 @@ def create_buttons(ui_button_group, WIN, scale_factor):
     start_button_clicked = pg.image.load("Assets/ui_assets/start_button_clicked.png").convert_alpha()
     table_sign = pg.image.load("Assets/ui_assets/table_sign.png").convert_alpha()
     add_button_ob = buttons(500, 800-214, 305, 209, add_button, WIN, scale_factor, add_button_clicked)
-    arrow_button_ob = buttons(1010, 123, 163, 134, arrow_button, WIN, scale_factor, arrow_button_clicked)
+    arrow_button_ob = buttons(1010, 123, 163, 134, arrow_button, WIN, scale_factor)
     remove_button_ob = buttons(1221, 10, 300, 142, remove_button, WIN, scale_factor, remove_button_clicked)
     start_button_ob = buttons(100, 800-228, 325, 231, start_button, WIN, scale_factor, start_button_clicked)
     table_sign_ob = buttons(1100, 800-688, 548, 688, table_sign, WIN, scale_factor)

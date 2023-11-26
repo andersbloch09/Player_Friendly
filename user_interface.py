@@ -120,7 +120,6 @@ def create_buttons(ui_button_group, WIN, scale_factor):
     add_button = pg.image.load("Assets/ui_assets/add_button.png").convert_alpha()
     add_button_clicked = pg.image.load("Assets/ui_assets/add_button_clicked.png").convert_alpha()
     arrow_button = pg.image.load("Assets/ui_assets/arrow.png").convert_alpha()
-    arrow_button_clicked = pg.image.load("Assets/ui_assets/arrow_clicked.png").convert_alpha()
     remove_button = pg.image.load("Assets/ui_assets/remove.png").convert_alpha()
     remove_button_clicked = pg.image.load("Assets/ui_assets/remove_clicked.png").convert_alpha()
     start_button = pg.image.load("Assets/ui_assets/start_button.png").convert_alpha()

@@ -529,7 +529,7 @@ def draw_lose(player, green_world_move, first_lvl_group, start_line, player_heal
                     terran_large_stone, action_run, frame_run, new_x, new_y, animation_list, 
                     point_carrots_group, point_count, user_interface, ui_button_group)
     
-    draw_text = LOSE_FONT.render("LOSER!", 1, BLACK)
+    draw_text = LOSE_FONT.render("LOSER!", 1, RED)
     WIN.blit(draw_text, (WIDTH/2 - draw_text.get_width() /
                          2, HEIGHT/2 - draw_text.get_height()/2))
     pg.display.update()

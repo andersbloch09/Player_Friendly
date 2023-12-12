@@ -77,6 +77,9 @@ class buttons(pg.sprite.Sprite):
         self.image_clicked = image_clicked
         self.start_time = time.time()
         self.start_b = False
+        # make lines so the buttons only be clicked in a specific area
+        #self.image = pg.Surface([(initial_width*scale_factor) - 40, (initial_height*scale_factor) - 40])
+        #self.image.fill((0, 0, 0))
         if self.image_clicked != 0: 
             self.image_clicked = pg.transform.smoothscale(self.image_clicked, (initial_width*scale_factor, initial_height*scale_factor))
         self.image = pg.transform.smoothscale(image, (initial_width*scale_factor, initial_height*scale_factor))

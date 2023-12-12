@@ -212,7 +212,7 @@ def sprite_creation_points(point_carrots_group, carrot_list):
     global screen_starter
     if len(carrot_list) < 6: 
         if screen_starter == False:
-                pos_x = random.randint(int(101 * scale_factor), int(1750 * scale_factor))
+                pos_x = random.randint(int(101 * scale_factor), int((1750*2) * scale_factor))
                 pos_y = random.randint(int(0 * scale_factor), int(750 * scale_factor))
         else:
             pos_x = WIDTH + 100

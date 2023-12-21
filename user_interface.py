@@ -87,6 +87,10 @@ class buttons(pg.sprite.Sprite):
         self.none_clicked = self.image
         self.rect.topleft = [pos_x*scale_factor, pos_y*scale_factor]
         self.window = window
+        # Define a hitbox to make sure the box is inside the actual button
+        self.placement_factor = 0.2
+        self.box = pg.Surface([self.rect.width - (self.rect.width*self.placement_factor)*2, self.rect.height - (self.rect.height*self.placement_factor)*2])
+        self.box.fill((0, 0, 0))
 
     def draw_click(self, mouse_pos=None, index=None):
         print(index)
@@ -115,6 +119,8 @@ class buttons(pg.sprite.Sprite):
     
     def draw(self):
         self.window.blit(self.image, (int(self.rect.topleft[0]), int(self.rect.topleft[1])))
+        self.window.blit(self.box, (int(self.rect.topleft[0] + (self.rect.width*self.placement_factor)), int(self.rect.topleft[1] + (self.rect.height*self.placement_factor))))
+
 
 # This function will create all the objects for the ui 
 def create_buttons(ui_button_group, WIN, scale_factor): 

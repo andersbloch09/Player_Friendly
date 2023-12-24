@@ -89,12 +89,9 @@ class buttons(pg.sprite.Sprite):
         self.window = window
         self.scale_factor = scale_factor
         # Define a hitbox to make sure the box is inside the actual button
-        size_remove = 78
-        self.pos_remove = 40
-        self.box = pg.Rect((int(self.rect.topleft[0] + (self.pos_remove*self.scale_factor)), int(self.rect.topleft[1] + (self.pos_remove*self.scale_factor))), (self.rect.width - (size_remove*self.scale_factor), self.rect.height - (size_remove*self.scale_factor)))
-        self.rect_surface = pg.Surface((self.box.width, self.box.height))
-        self.rect_surface.fill((0, 0, 0))
-
+        #button_mask = pg.mask.from_surface(image_clicked)
+        #self.mask_image = button_mask.to_surface()
+        # make check to see if the image_clicked exits in the blitting
 
     def draw_click(self, mouse_pos=None, index=None):
         print(index)
@@ -123,7 +120,7 @@ class buttons(pg.sprite.Sprite):
     
     def draw(self):
         self.window.blit(self.image, (int(self.rect.topleft[0]), int(self.rect.topleft[1])))
-        #self.window.blit(self.rect_surface, self.box.topleft)
+        #self.window.blit(self.mask_image, self.rect.topleft, special_flags=pg.BLEND_RGBA_MULT)
 
 
 # This function will create all the objects for the ui 

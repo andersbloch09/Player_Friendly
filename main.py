@@ -635,7 +635,7 @@ def main():
                 if user_interface == 1:
                     # Checks which ui element is clicked on
                     for sprite in ui_button_group:
-                        if sprite.box.collidepoint(event.pos):
+                        if sprite.rect.collidepoint(event.pos):
                             index = ui_button_group.sprites().index(sprite)
                             sprite.button_filter(index)
                             user_interface = sprite.draw_click(event.pos, index)

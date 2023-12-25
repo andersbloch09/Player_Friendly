@@ -635,10 +635,18 @@ def main():
                 if user_interface == 1:
                     # Checks which ui element is clicked on
                     for sprite in ui_button_group:
+                        # if the mouse pos is inside one of the button rects
                         if sprite.rect.collidepoint(event.pos):
-                            index = ui_button_group.sprites().index(sprite)
-                            sprite.button_filter(index)
-                            user_interface = sprite.draw_click(event.pos, index)
+                            # Create a relative mouse position based on the buttons position 
+                            relative_mouse_pos = (event.pos[0] - sprite.rect.x, event.pos[1] - sprite.rect.y)
+                            # If the sprite has a button_mask
+                            if sprite.button_mask != 0: 
+                                # Call the method inside the class to check if a white pixel is clicked
+                                if sprite.is_position_inside_mask(sprite.mask_image, relative_mouse_pos):
+                                    index = ui_button_group.sprites().index(sprite)
+                                    sprite.button_filter(index)
+                                    user_interface = sprite.draw_click(relative_mouse_pos, index)
+                    
                             #################### work here ################ these functions 
 
         # Draw if you lose

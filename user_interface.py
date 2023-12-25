@@ -82,16 +82,31 @@ class buttons(pg.sprite.Sprite):
         #self.image.fill((0, 0, 0))
         if self.image_clicked != 0: 
             self.image_clicked = pg.transform.smoothscale(self.image_clicked, (initial_width*scale_factor, initial_height*scale_factor))
+            # Define a hitbox to make sure the box is inside the actual button
+            self.button_mask = pg.mask.from_surface(self.image_clicked)
+            self.mask_image = self.button_mask.to_surface()
+        else: 
+            self.button_mask = 0
+        
         self.image = pg.transform.smoothscale(image, (initial_width*scale_factor, initial_height*scale_factor))
         self.rect = self.image.get_rect()
         self.none_clicked = self.image
         self.rect.topleft = [pos_x*scale_factor, pos_y*scale_factor]
         self.window = window
         self.scale_factor = scale_factor
-        # Define a hitbox to make sure the box is inside the actual button
-        #button_mask = pg.mask.from_surface(image_clicked)
-        #self.mask_image = button_mask.to_surface()
-        # make check to see if the image_clicked exits in the blitting
+        
+
+    # Is used to check if the position clicked in the masks are white or not
+    def is_position_inside_mask(self, mask_surface, position):
+        x, y = int(position[0]), int(position[1])
+        color = mask_surface.get_at((x, y))
+        
+        if color == (255, 255, 255):
+            return True
+        
+        else:
+            return False
+
 
     def draw_click(self, mouse_pos=None, index=None):
         print(index)
@@ -120,7 +135,9 @@ class buttons(pg.sprite.Sprite):
     
     def draw(self):
         self.window.blit(self.image, (int(self.rect.topleft[0]), int(self.rect.topleft[1])))
-        #self.window.blit(self.mask_image, self.rect.topleft, special_flags=pg.BLEND_RGBA_MULT)
+        # Out comment to see the masks made
+        #if self.image_clicked != 0: 
+        #   self.window.blit(self.mask_image, self.rect.topleft)
 
 
 # This function will create all the objects for the ui 

@@ -672,7 +672,9 @@ def main():
         terran_large_stone = sprite_creation_terran(terran_large_stone, large_stone_list)
         large_stone_hit_fence(first_lvl_group, terran_large_stone)
         carrot_hit_fence(first_lvl_group, point_carrots_group)
+
         keys_pressed = pg.key.get_pressed()
+        
         carrot_pick(point_carrots_group, player_sprite)
         stone_hit(terran_large_stone, player_sprite)
         player_hit(first_lvl_group, player)

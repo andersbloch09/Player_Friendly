@@ -1,5 +1,5 @@
 import pygame as pg
-from cryptography.fernet import Fernet
+#from cryptography.fernet import Fernet
 import base64
 import time 
        
@@ -38,7 +38,7 @@ def decode_key(encoded_key):
 def search_key():
     # Load existing highscores if the file exists
     try:
-        with open(r"Assets/placeholders/placeholder.txt", "r") as file:
+        with open(r"img/placeholders/placeholder.txt", "r") as file:
             encoded_key = file.read()
             decoded_key = decode_key(encoded_key)
             return decoded_key
@@ -49,26 +49,26 @@ def search_key():
 def save_data(encoded_key, encrypted_score):
 
     # Save the encrypted data to the file
-    with open(r"Assets/placeholders/rating.txt", "wb") as file:
+    with open(r"img/placeholders/rating.txt", "wb") as file:
         file.write(encrypted_score)
     
-    with open(r"Assets/placeholders/placeholder.txt", "w") as file:
+    with open(r"img/placeholders/placeholder.txt", "w") as file:
         file.write(encoded_key)
 
 def read_data():
     # Opens both files as read to get the data after it decodes the data
-    with open(r"Assets/placeholders/rating.txt", "rb") as file:
+    with open(r"img/placeholders/rating.txt", "rb") as file:
         encrypted_data = file.read()
     
-    with open(r"Assets/placeholders/placeholder.txt", "r") as file:
+    with open(r"img/placeholders/placeholder.txt", "r") as file:
         secret_key = file.read()
 
-    decoded_key = decode_key(secret_key)
-    cipher_suite = Fernet(decoded_key)
+    #decoded_key = decode_key(secret_key)
+    #cipher_suite = Fernet(decoded_key)
 
-    decrypted_data = decrypt_data(encrypted_data, cipher_suite)
+    #decrypted_data = decrypt_data(encrypted_data, cipher_suite)
 
-    print(decrypted_data)
+    #print(decrypted_data)
 
 # Class for ui buttons
 class buttons(pg.sprite.Sprite):
@@ -144,14 +144,14 @@ class buttons(pg.sprite.Sprite):
 def create_buttons(ui_button_group, WIN, scale_factor): 
     ##########################################################################################################
     # UI sprites
-    add_button = pg.image.load("Assets/ui_assets/add_button.png").convert_alpha()
-    add_button_clicked = pg.image.load("Assets/ui_assets/add_button_clicked.png").convert_alpha()
-    arrow_button = pg.image.load("Assets/ui_assets/arrow.png").convert_alpha()
-    remove_button = pg.image.load("Assets/ui_assets/remove.png").convert_alpha()
-    remove_button_clicked = pg.image.load("Assets/ui_assets/remove_clicked.png").convert_alpha()
-    start_button = pg.image.load("Assets/ui_assets/start_button.png").convert_alpha()
-    start_button_clicked = pg.image.load("Assets/ui_assets/start_button_clicked.png").convert_alpha()
-    table_sign = pg.image.load("Assets/ui_assets/table_sign.png").convert_alpha()
+    add_button = pg.image.load("img/ui_assets/add_button.png").convert_alpha()
+    add_button_clicked = pg.image.load("img/ui_assets/add_button_clicked.png").convert_alpha()
+    arrow_button = pg.image.load("img/ui_assets/arrow.png").convert_alpha()
+    remove_button = pg.image.load("img/ui_assets/remove.png").convert_alpha()
+    remove_button_clicked = pg.image.load("img/ui_assets/remove_clicked.png").convert_alpha()
+    start_button = pg.image.load("img/ui_assets/start_button.png").convert_alpha()
+    start_button_clicked = pg.image.load("img/ui_assets/start_button_clicked.png").convert_alpha()
+    table_sign = pg.image.load("img/ui_assets/table_sign.png").convert_alpha()
     add_button_ob = buttons(500, 800-214, 305, 209, add_button, WIN, scale_factor, add_button_clicked)
     arrow_button_ob = buttons(1010, 123, 163, 134, arrow_button, WIN, scale_factor)
     remove_button_ob = buttons(1221, 10, 300, 142, remove_button, WIN, scale_factor, remove_button_clicked)
@@ -168,21 +168,22 @@ def create_buttons(ui_button_group, WIN, scale_factor):
     return ui_button_group
 
 def ui():
-    secret_key = search_key()
+    #secret_key = search_key()
     
-    if not secret_key: 
+    #if not secret_key: 
         # Generate a secret key for encryption. Keep this secret!
-        secret_key = Fernet.generate_key()
+        #secret_key = Fernet.generate_key()
     
-    cipher_suite = Fernet(secret_key)
+    #cipher_suite = Fernet(secret_key)
     
     # encrypted_score = encrypt_data(point_count, cipher_suite)
     
-    encoded_key = encode_key(secret_key)
+    #encoded_key = encode_key(secret_key)
     
 
     #print("encrypt", encrypted_score)
     #print("decrypt", decrypted_score)
 
     # save_data(encoded_key, encrypted_score)
-    read_data()
+    #read_data()
+    pass

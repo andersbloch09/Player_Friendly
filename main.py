@@ -1,20 +1,21 @@
-import pygame as pg
 import random
+from sys import exit
 from extract_player_image import extract_player_image, extract_player_image_fall, get_center_coords
 from Scale_function import calculate_scale_factors
 from update_and_hit_func import (point_counter, sprite_movement,sprite_movement_terran,
                                   point_object_update, large_stone_hit_fence, carrot_hit_fence, ui_draw, draw_pause)
 from user_interface import create_buttons
-from sys import exit
 import time 
+import pygame as pg
+import asyncio
 
 pg.init()
-
 
 # Width and Height of window 
 width, height = 1800, 800
 
 scale_factor = calculate_scale_factors(width, height)
+
 
 # Here are all the used global variables 
 FPS = 60
@@ -22,9 +23,12 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 
+scale_factor = 1
+
 # Width and Height of window 
 WIDTH, HEIGHT = 1800 * scale_factor, 800 * scale_factor
-print(WIDTH, HEIGHT)
+#print(WIDTH, HEIGHT)
+
 
 # Velocities 
 player_vel = int(8 * scale_factor)
@@ -63,12 +67,12 @@ player_HEIGHT = 40/3 * scale_factor
 
 # player = pg.Rect(0, 0, player_WIDTH, player_HEIGHT)
 
-GREEN_WORLD = pg.transform.scale(pg.image.load('Assets/GreenWorld3.PNG').convert(), (WIDTH, HEIGHT)) 
-large_stone_image = pg.image.load("Assets/large_stone_3.PNG").convert_alpha()
-sprite_sheet_image = pg.image.load("Assets/walking_assets_player_friendly_1.png").convert_alpha()
-sprite_sheet_image_fall = pg.image.load("Assets/hit_fence_assets_done.png").convert_alpha()
-hegn_til_anders = pg.image.load("Assets/HegnTilAnders.png").convert_alpha()
-large_carrot = pg.image.load("Assets/large_carrot.png").convert_alpha()
+GREEN_WORLD = pg.transform.scale(pg.image.load('img/GreenWorld3.PNG').convert(), (WIDTH, HEIGHT)) 
+large_stone_image = pg.image.load("img/large_stone_3.PNG").convert_alpha()
+sprite_sheet_image = pg.image.load("img/walking_assets_player_friendly_1.png").convert_alpha()
+sprite_sheet_image_fall = pg.image.load("img/hit_fence_assets_done.png").convert_alpha()
+hegn_til_anders = pg.image.load("img/HegnTilAnders.png").convert_alpha()
+large_carrot = pg.image.load("img/large_carrot.png").convert_alpha()
 
 
 
@@ -536,7 +540,7 @@ def draw_lose(player, green_world_move, first_lvl_group, start_line, player_heal
     pg.time.delay(1000)
 
 
-def main():
+async def main():
     global screen_starter
     global player
     global large_stone_list
@@ -605,6 +609,7 @@ def main():
     run = True
 
     while run:
+        await asyncio.sleep(0)
         clock.tick(FPS)
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -696,10 +701,10 @@ def main():
         # Checks for button reset of game
         # Peter sige det skal være space
         if keys_pressed[pg.K_SPACE]:
-            main()
+            await main()
         if keys_pressed[pg.K_ESCAPE]:
             user_interface = True
-            main()
+            await main()
         if keys_pressed[pg.K_p]:
             # Makes sure the user interface is not running
             if not user_interface: 
@@ -714,7 +719,8 @@ def main():
                     point_timer_0 = time.time()
                     # New timer start to make sure it does not reset instatly
                     start_time_paused = time.time()
-    main()
+    await main()
 
-if __name__ == "__main__":
-    main()
+
+asyncio.run(main())
+

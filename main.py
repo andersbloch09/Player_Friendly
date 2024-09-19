@@ -370,7 +370,8 @@ def draw_window(player, green_world_move, first_lvl_group, start_line, player_he
 
 
 # This function creates the movement for the player
-def player_movement(keys_pressed, player, still_player_image, last_update_player, animation_cooldown, frame_run, action_run, new_x, new_y, screen_starter):
+def player_movement(keys_down, player, still_player_image, last_update_player, animation_cooldown, 
+                    frame_run, action_run, new_x, new_y, screen_starter):
     current_time = pg.time.get_ticks()
     if current_time - last_update_player >= animation_cooldown:
         frame_run += 1
@@ -379,43 +380,43 @@ def player_movement(keys_pressed, player, still_player_image, last_update_player
             frame_run = 0
     new_y = 0
     new_x = 0
-    if not any(keys_pressed):
+    if not any(keys_down.values()):
         action_run = 8
     if player.x <= 0 and screen_starter == True:
         action_run = 0
     # This controls straight walks
-    if keys_pressed[pg.K_a] and player.x > 0:
+    if keys_down.get(pg.K_a, False) and player.x > 0:
         player.x -= player_vel
         action_run = 2
         new_y = 0
         new_x = 0
-    if keys_pressed[pg.K_d] and player.x < WIDTH - player_WIDTH*3:
+    if keys_down.get(pg.K_d, False) and player.x < WIDTH - player_WIDTH*3:
         player.x += player_vel
         action_run = 0 
         new_y = 0
         new_x = 0
-    if keys_pressed[pg.K_w]:
+    if keys_down.get(pg.K_w, False):
         player.y -= player_vel
         action_run = 1
         new_y = 0
         new_x = 0
-    if keys_pressed[pg.K_s]:
+    if keys_down.get(pg.K_s, False):
         player.y += player_vel
         action_run = 3
         new_y = 0
         new_x = 0
 
     # This controls the side walk 
-    if keys_pressed[pg.K_d] and keys_pressed[pg.K_w] and player.x < WIDTH - player_WIDTH*3:
+    if keys_down.get(pg.K_d, False) and keys_down.get(pg.K_w, False) and player.x < WIDTH - player_WIDTH*3:
         action_run = 4
         new_x, new_y = get_center_coords(still_player_image, scale_factor)
-    if keys_pressed[pg.K_w] and keys_pressed[pg.K_a] and player.x > 0:
+    if keys_down.get(pg.K_w, False) and keys_down.get(pg.K_a, False) and player.x > 0:
         action_run = 5
         new_x, new_y = get_center_coords(still_player_image, scale_factor)
-    if keys_pressed[pg.K_a] and keys_pressed[pg.K_s] and player.x > 0:
+    if keys_down.get(pg.K_a, False) and keys_down.get(pg.K_s, False) and player.x > 0:
         action_run = 6
         new_x, new_y = get_center_coords(still_player_image, scale_factor)
-    if keys_pressed[pg.K_s] and keys_pressed[pg.K_d] and player.x < WIDTH - player_WIDTH*3:
+    if keys_down.get(pg.K_s, False) and keys_down.get(pg.K_d, False) and player.x < WIDTH - player_WIDTH*3:
         action_run = 7
         new_x, new_y = get_center_coords(still_player_image, scale_factor)
     
@@ -548,6 +549,8 @@ async def main():
     global player_vel
     global user_interface
     global paused
+    # Dict for keys_pressed
+    keys_down = {}
     # List clearing to avoid large ram issues
     avoid_object_list.clear()
     large_stone_list.clear()
@@ -636,6 +639,14 @@ async def main():
             if event.type == STONE_HIT:
                 point_timer_0 += 25
 
+            # Handle key press (KEYDOWN)
+            if event.type == pg.KEYDOWN:
+                keys_down[event.key] = True
+            
+            # Handle key release (KEYUP)
+            if event.type == pg.KEYUP:
+                keys_down[event.key] = False
+
             if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
                 if user_interface == 1:
                     # Checks which ui element is clicked on
@@ -677,8 +688,6 @@ async def main():
         terran_large_stone = sprite_creation_terran(terran_large_stone, large_stone_list)
         large_stone_hit_fence(first_lvl_group, terran_large_stone)
         carrot_hit_fence(first_lvl_group, point_carrots_group)
-
-        keys_pressed = pg.key.get_pressed()
         
         carrot_pick(point_carrots_group, player_sprite)
         stone_hit(terran_large_stone, player_sprite)
@@ -686,7 +695,7 @@ async def main():
         if user_interface == False:
             if not paused:
                 if fall == 0: 
-                    action_run, frame_run, new_x, new_y, last_update_player = player_movement(keys_pressed, player, still_player_image, last_update_player,
+                    action_run, frame_run, new_x, new_y, last_update_player = player_movement(keys_down, player, still_player_image, last_update_player,
                                                             animation_cooldown, frame_run, action_run, new_x, new_y, screen_starter)
 
                 if fall == 1:
@@ -700,12 +709,12 @@ async def main():
         
         # Checks for button reset of game
         # Peter sige det skal være space
-        if keys_pressed[pg.K_SPACE]:
+        if keys_down.get(pg.K_SPACE, False):
             await main()
-        if keys_pressed[pg.K_ESCAPE]:
+        if keys_down.get(pg.K_ESCAPE, False):
             user_interface = True
             await main()
-        if keys_pressed[pg.K_p]:
+        if keys_down.get(pg.K_p, False):
             # Makes sure the user interface is not running
             if not user_interface: 
                 # This creates a timer så the pause does not undo itself after just being clicked

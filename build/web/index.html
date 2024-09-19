@@ -1,14 +1,14 @@
 <html lang="en-us"><script src="https://pygame-web.github.io/archives/0.9/pythons.js" type=module id=site data-LINES=57 data-CONSOLE=25 data-python=python3.12 data-os=vtx,fs,snd,gui async defer>#<!--
 
 print("""
-Loading player_friendly_web from player_friendly_web.apk
-    Pygbag Version : 0.9.1
+Loading player_friendly from player_friendly.apk
+    Pygbag Version : 0.9.2
     Template Version : 0.9.0
     Python  : 3.12
     CDN URL : https://pygame-web.github.io/archives/0.9/
     Screen  : 1280x720
-    Title   : player_friendly_web
-    Folder  : player_friendly_web
+    Title   : player_friendly
+    Folder  : player_friendly
     Authors : pgw
     SPDX-License-Identifier: cookiecutter.spdx
 
@@ -84,12 +84,12 @@ async def custom_site():
 
 
 
-    apk = "player_friendly_web.apk"
+    apk = "player_friendly.apk"
 
-    bundle = "player_friendly_web"
+    bundle = "player_friendly"
 
     # the C or js loader could do that but be explicit.
-    appdir = Path(f"/data/data/{bundle}") # /data/data/player_friendly_web
+    appdir = Path(f"/data/data/{bundle}") # /data/data/player_friendly
     appdir.mkdir()
 
 
@@ -239,7 +239,7 @@ config = {
     user_canvas_managed : 0,
     ume_block : 1,
     can_close : 0,
-    archive : "player_friendly_web",
+    archive : "player_friendly",
     gui_debug : 3,
     cdn : "https://pygame-web.github.io/archives/0.9/",
     autorun : 0,
@@ -248,7 +248,7 @@ config = {
 
 </script>
 
-    <title>player_friendly_web</title>
+    <title>player_friendly</title>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

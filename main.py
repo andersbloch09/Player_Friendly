@@ -662,8 +662,9 @@ async def main():
                                     index = ui_button_group.sprites().index(sprite)
                                     sprite.button_filter(index)
                                     user_interface = sprite.draw_click(relative_mouse_pos, index)
-                    
+                                    
                             #################### work here ################ these functions 
+
 
         # Draw if you lose
         if player_health <= 0: 

@@ -111,21 +111,29 @@ class buttons(pg.sprite.Sprite):
     def draw_click(self, mouse_pos=None, index=None):
         print(index)
         if index != 4 and index != 2:
-            self.check_time = time.time()
-            if mouse_pos:
-                self.image = self.image_clicked
-                self.draw()
-                pg.display.update()
-                time.sleep(0.20)
-                self.start_time = time.time()
-                if self.start_time - self.check_time > 0.15: 
+            self.check_time = pg.time.get_ticks() / 1000  # Time in seconds
+        if mouse_pos:
+            self.image = self.image_clicked
+            self.draw()
+            pg.display.update()
+            
+            #pg.time.wait(200)  # Wait for 200 milliseconds (0.20 seconds)
+            
+            self.start_time = pg.time.get_ticks() / 1000  # Time in seconds
+            # Check the time difference
+            while self.check_time - self.start_time < 0.21: 
+                self.check_time = pg.time.get_ticks() / 1000  # Time in seconds
+                print(self.check_time - self.start_time)
+                if self.check_time - self.start_time > 0.2:
                     self.image = self.none_clicked
-                    if self.start_b == True: 
+                    self.draw()  # Redraw with the non-clicked image
+                    if self.start_b:
                         return False
-                    else: 
+                    else:
                         return True
-        else: 
+        else:
             return True
+  
 
     def button_filter(self, button_index):
         self.start_b = False

@@ -720,6 +720,8 @@ async def main():
             await main()
         if keys_down.get(pg.K_ESCAPE, False):
             user_interface = True
+            # To make paused go away
+            paused = False
             await main()
         if keys_down.get(pg.K_p, False):
             # Makes sure the user interface is not running

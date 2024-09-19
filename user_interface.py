@@ -76,7 +76,7 @@ class buttons(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self)
         self.image_clicked = image_clicked
         self.start_time = time.time()
-        self.start_b = False
+        self.index = None
         # make lines so the buttons only be clicked in a specific area
         #self.image = pg.Surface([(initial_width*scale_factor) - 40, (initial_height*scale_factor) - 40])
         #self.image.fill((0, 0, 0))
@@ -108,39 +108,32 @@ class buttons(pg.sprite.Sprite):
             return False
 
 
-    def draw_click(self, mouse_pos=None, index=None):
+    def make_click_timer(self, mouse_pos=None, index=None):
         print(index)
+        self.index = index
+        self.start_time = pg.time.get_ticks() / 1000  # Time in seconds
         if index != 4 and index != 2:
-            self.check_time = pg.time.get_ticks() / 1000  # Time in seconds
-        if mouse_pos:
-            self.image = self.image_clicked
+            if mouse_pos:
+                self.image = self.image_clicked
+                self.draw()
+                pg.display.update()
+                return self.start_time
+        else:
+            return None
+        
+    def end_click_animation(self, click_start_time, user_interface, button_clicked): 
+        click_end_time = pg.time.get_ticks() / 1000
+        if click_end_time - click_start_time > 0.15: 
+            self.image = self.none_clicked
             self.draw()
             pg.display.update()
-            
-            #pg.time.wait(200)  # Wait for 200 milliseconds (0.20 seconds)
-            
-            self.start_time = pg.time.get_ticks() / 1000  # Time in seconds
-            # Check the time difference
-            while self.check_time - self.start_time < 0.21: 
-                self.check_time = pg.time.get_ticks() / 1000  # Time in seconds
-                print(self.check_time - self.start_time)
-                if self.check_time - self.start_time > 0.2:
-                    self.image = self.none_clicked
-                    self.draw()  # Redraw with the non-clicked image
-                    if self.start_b:
-                        return False
-                    else:
-                        return True
-        else:
-            return True
-  
+            if self.index == 0: 
+                user_interface = False
+            button_clicked = None
+            return button_clicked, user_interface
+        return button_clicked, user_interface
+        
 
-    def button_filter(self, button_index):
-        self.start_b = False
-        print("Button index:", button_index)
-        if button_index == 0: 
-            self.start_b = True
-    
     def draw(self):
         self.window.blit(self.image, (int(self.rect.topleft[0]), int(self.rect.topleft[1])))
         # Out comment to see the masks made

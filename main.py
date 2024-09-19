@@ -601,7 +601,11 @@ async def main():
 
     # Sprite for player rect to check for colissions with the pygame functions 
     player_sprite = PlayerSprite(player)
-
+    
+    # Timer for button click
+    click_start_time = pg.time.get_ticks() / 1000
+    button_clicked = None
+    
     # Timers to control speed, points and paused 
     speed_timer_0 = time.time()
     point_timer_0 = time.time()
@@ -660,11 +664,13 @@ async def main():
                                 # Call the method inside the class to check if a white pixel is clicked
                                 if sprite.is_position_inside_mask(sprite.mask_image, relative_mouse_pos):
                                     index = ui_button_group.sprites().index(sprite)
-                                    sprite.button_filter(index)
-                                    user_interface = sprite.draw_click(relative_mouse_pos, index)
-                                    
+                                    click_start_time = sprite.make_click_timer(relative_mouse_pos, index)
+                                    button_clicked = sprite
                             #################### work here ################ these functions 
-
+        
+        # Button_click animation
+        if button_clicked:                   
+            button_clicked, user_interface = button_clicked.end_click_animation(click_start_time, user_interface, button_clicked)
 
         # Draw if you lose
         if player_health <= 0: 
@@ -718,7 +724,7 @@ async def main():
         if keys_down.get(pg.K_p, False):
             # Makes sure the user interface is not running
             if not user_interface: 
-                # This creates a timer så the pause does not undo itself after just being clicked
+                # This creates a timer so the pause does not undo itself after just being clicked
                 check_time_paused = time.time()
                 if paused == False and check_time_paused - start_time_paused > 0.20:
                     paused = True

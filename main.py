@@ -23,7 +23,7 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 
-scale_factor = 1
+#scale_factor = 1
 
 # Width and Height of window 
 WIDTH, HEIGHT = 1800 * scale_factor, 800 * scale_factor
@@ -214,12 +214,13 @@ class PlayerSprite(pg.sprite.Sprite):
 # This function controlls the points spawn and pickup
 def sprite_creation_points(point_carrots_group, carrot_list):
     global screen_starter
+   
     if len(carrot_list) < 6: 
         if screen_starter == False:
                 pos_x = random.randint(int(101 * scale_factor), int((1750*2) * scale_factor))
                 pos_y = random.randint(int(0 * scale_factor), int(750 * scale_factor))
         else:
-            pos_x = WIDTH + 100
+            pos_x = WIDTH + random.randint(int(10 * scale_factor), int(500 * scale_factor))
             pos_y = random.randint(int(0 * scale_factor), int(750 * scale_factor))
 
         carrot = point_object(pos_x, pos_y)
@@ -231,20 +232,19 @@ def sprite_creation_points(point_carrots_group, carrot_list):
 
         for sprite in carrot_list:
             point_carrots_group.add(sprite)
-
+        
     return point_carrots_group
 
 # Creates stones
 def create_large_stone(terran_large_stone, large_stone_list):
     global screen_starter
-
     if len(large_stone_list) < 3:
         if screen_starter == False:
             pos_x = random.randint(int(101 * scale_factor), int(1750 * scale_factor))
             pos_y = random.randint(int(0 * scale_factor), int(750 * scale_factor))
         else:
             # The width is *2 to avoid spawn on the screen when the width 
-            pos_x = WIDTH * 2 + 100
+            pos_x = WIDTH + random.randint(int(100 * scale_factor), int(500 * scale_factor))
             pos_y = random.randint(int(0 * scale_factor), int(750 * scale_factor))
             
         initial_width, initial_height = int(70 * scale_factor), int(70 * scale_factor)
@@ -350,8 +350,8 @@ def draw_window(player, green_world_move, first_lvl_group, start_line, player_he
     point_count = POINT_FONT.render(
         "Points: " + str(point_count), 1, WHITE)
 
-    WIN.blit(point_count, (int(300 * scale_factor), int(10 * scale_factor)))
-    WIN.blit(player_health, (int(10 * scale_factor), int(10 * scale_factor)))
+    #WIN.blit(player_health, (int(300 * scale_factor), int(10 * scale_factor)))
+    WIN.blit(point_count, (int(10 * scale_factor), int(10 * scale_factor)))
 
     # This draws the player 
     # print(action_run, frame_run)
@@ -535,10 +535,13 @@ def draw_lose(player, green_world_move, first_lvl_group, start_line, player_heal
                     point_carrots_group, point_count, user_interface, ui_button_group)
     
     draw_text = LOSE_FONT.render("LOSER!", 1, RED)
+    point_text = LOSE_FONT.render(f"Your score was: {int(point_count)}", 1, RED)
     WIN.blit(draw_text, (WIDTH/2 - draw_text.get_width() /
                          2, HEIGHT/2 - draw_text.get_height()/2))
+    WIN.blit(point_text, (WIDTH/2 - point_text.get_width() /
+                         2, HEIGHT/2 + point_text.get_height()/2))
     pg.display.update()
-    pg.time.delay(1000)
+    pg.time.delay(2000)
 
 
 async def main():
@@ -627,13 +630,13 @@ async def main():
             # Event for player hit 
             if event.type == PLAYER_HIT_FRONT:
                 hit_count += 1
-                player_health -= 1
+                #player_health -= 1
                 fall_front = True 
                 fall = 1
 
             if event.type == PLAYER_HIT_BACK:
                 hit_count += 1
-                player_health -= 1
+                #player_health -= 1
                 fall_back = True
                 fall = 1
         

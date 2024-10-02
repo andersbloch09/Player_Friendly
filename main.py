@@ -23,7 +23,7 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 
-#scale_factor = 1
+scale_factor = 1
 
 # Width and Height of window 
 WIDTH, HEIGHT = 1800 * scale_factor, 800 * scale_factor
